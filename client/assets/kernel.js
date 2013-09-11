@@ -10,50 +10,58 @@
 
         };
 
-        var level = new Level(7, [
-            new Empty(),
-            new Empty(),
-            new Empty(),
-            new Empty(),
-            new Empty(),
-            new Empty(),
-            new Empty()
-        ]);
+        var numCells = 6
+        var target = 0;
+        var cells = [];
+        for(var i=0; i<numCells; i++) {
+            cells[i] = new Empty();
+        }
 
-        level.setCellContents(2, new Enemy({
+        var level = new Level(numCells, cells);
+
+        level.setCellContents(0, new Captive({
+            name: 'captive',
+            type: 'Captive',
+            cell: 0,
+            level: level
+        }));
+
+        level.setCellContents(4, new Enemy({
             name: 'enemy',
             type: 'Thick Sludge',
             attackType: 'melee',
             health: 25,
-            cell: 2,
+            cell: 4,
             level: level,
             attackDamage: 3
         }));
 
-        level.setCellContents(3, new Enemy({
+        level.setCellContents(6, new Enemy({
             name: 'enemy',
             type: 'Archer',
             attackType: 'ranged',
-            range: 2,
+            range: 3,
             health: 10,
-            cell: 3,
+            cell: 6,
             level: level,
             attackDamage: 3
         }));
 
-        level.setCellContents(5, new Enemy({
+        level.setCellContents(7, new Enemy({
             name: 'enemy',
-            type: 'Thick Sludge',
-            attackType: 'melee',
-            health: 25,
-            cell: 5,
+            type: 'Archer',
+            attackType: 'ranged',
+            range: 3,
+            health: 10,
+            cell: 7,
             level: level,
             attackDamage: 3
         }));
+        
 
         var warrior = new Warrior({
             level: level,
-            currentCell: 0,
+            currentCell: 2,
             health: 20,
             attackDamage: 5
         });
@@ -88,7 +96,7 @@
                         log('jsWarrior failed this level!');
                         return;
                     }
-                    if(warrior.getCurrentCell() === 6) {
+                    if(warrior.getCurrentCell() === target) {
                         log('Hurray you completed this level!');
                         clearInterval(interval);
                         return;
@@ -99,6 +107,23 @@
             }
         };
     };
+
+    function Captive(options) {
+        var self = this;
+
+        self.name = options.name;
+        self.type = options.type;
+        self.cell = options.cell;
+        self.level = options.level;
+
+        self.bound = true;
+
+        self.free = function() {
+            self.bound = false;
+            log(options.type + ' is now free!');
+            self.level.setCellContents(self.cell, new Empty());
+        }
+    }
 
     function Enemy(options) {
         var self = this;
@@ -151,11 +176,14 @@
                 }
 
                 if(canAttack && warrior) {
+
                     if(!self.firstAttack) {
                         warrior.hit(self.attackDamage);
                         log(self.type + ' hits jsWarrior and deals ' + self.attackDamage + ' damage!');    
                     }
                     self.firstAttack = false;
+                } else {
+                    self.firstAttack = true;
                 }
 
             }       
@@ -200,16 +228,30 @@
         self.name = 'warrior';
 
         self.level.setCellContents(self.currentCell, self);
-        self.walk = function() {
-            
-            if(self.level.getCellContents(self.currentCell + 1).object.name === 'empty') {
-                self.level.setCellContents(self.currentCell, new Empty());
-                self.currentCell++;
-                self.level.setCellContents(self.currentCell, self);
-                
-                log('Walking to next cell! currentCell is ' + self.currentCell);
-                return true
+        self.walk = function(direction) {
+            if(!direction) {
+                direction = 'forward';
             }
+            if(direction === 'forward') {
+                if(self.level.getCellContents(self.currentCell + 1).object.name === 'empty') {
+                    self.level.setCellContents(self.currentCell, new Empty());
+                    self.currentCell++;
+                    self.level.setCellContents(self.currentCell, self);
+                    
+                    log('Walking to next cell! currentCell is ' + self.currentCell);
+                    return true
+                }    
+            } else if(direction === 'backward') {
+                if(self.level.getCellContents(self.currentCell - 1).object.name === 'empty') {
+                    self.level.setCellContents(self.currentCell, new Empty());
+                    self.currentCell--;
+                    self.level.setCellContents(self.currentCell, self);
+                    
+                    log('Walking to next cell! currentCell is ' + self.currentCell);
+                    return true
+                }
+            }
+            
             log('Cannot walk to next cell!');
             return false;
         }
@@ -228,7 +270,7 @@
                 obj.hit(self.attackDamage);
                 
             } else {
-                log('jsWarrior warrior hit nothing');
+                log('jsWarrior warrior hit nothing!');
             }
         }
 
@@ -242,6 +284,23 @@
             if(self.health > 20) {
                 self.health = 20;
             }
+        }
+
+        self.rescue = function() {
+            var obj = self.level.getCellContents(self.currentCell + 1).object
+
+            log('jsWarrior attempts to rescue!');
+            if(obj.name === 'captive') {
+                log('jsWarrior rescues ' + obj.type + ' !');
+                obj.free();
+            } else {
+                log('jsWarrior rescues nothing!');
+            }
+
+        }
+
+        self.pivot = function() {
+            self.moveVar *= -1;
         }
 
         self.getCurrentCell = function() {
