@@ -10,8 +10,8 @@
 
         };
 
-        var numCells = 6
-        var target = numCells - 1;
+        var numCells = 11
+        var target = 0;
         var cells = [];
         for(var i=0; i<numCells; i++) {
             cells[i] = new Empty();
@@ -19,35 +19,52 @@
 
         var level = new Level(numCells, cells);
 
-        level.setCellContents(2, new Captive({
+        level.setCellContents(1, new Captive({
             name: 'captive',
             type: 'Captive',
-            cell: 2,
+            cell: 1,
             level: level
         }));
 
-        level.setCellContents(3, new Enemy({
+        level.setCellContents(2, new Enemy({
+            name: 'enemy',
+            type: 'Archer',
+            attackType: 'ranged',
+            range: 3,
+            health: 10,
+            cell: 2,
+            level: level,
+            attackDamage: 3,
+            pivoted: true
+        }));
+
+        level.setCellContents(7, new Enemy({
+            name: 'enemy',
+            type: 'Thick Sludge',
+            attackType: 'melee',
+            health: 25,
+            cell: 7,
+            level: level,
+            attackDamage: 5
+        }));
+
+        level.setCellContents(9, new Enemy({
             name: 'enemy',
             type: 'Wizard',
             attackType: 'ranged',
             range: 3,
             health: 3,
-            cell: 3,
+            cell: 9,
             level: level,
             attackDamage: 11
         }));
 
-        level.setCellContents(4, new Enemy({
-            name: 'enemy',
-            type: 'Wizard',
-            attackType: 'ranged',
-            range: 3,
-            health: 3,
-            cell: 4,
-            level: level,
-            attackDamage:11
+        level.setCellContents(10, new Captive({
+            name: 'captive',
+            type: 'Captive',
+            cell: 10,
+            level: level
         }));
-
         // level.setCellContents(7, new Enemy({
         //     name: 'enemy',
         //     type: 'Archer',
@@ -62,20 +79,23 @@
 
         var warrior = new Warrior({
             level: level,
-            currentCell: 0,
+            currentCell: 5,
             health: 20,
             attackDamage: 5
         });
 
-        var jsWarrior = {};
+        window.jsWarrior = {};
 
         self.run = function(code) {
             $('.log-panel').empty();
             clearInterval(global.interval);
-            eval(code);
-            try {
-                var turn = 0;
-                global.interval = setInterval(function() {
+            
+            
+            
+            (new Function(code))();    
+            var turn = 0;
+            global.interval = setInterval(function() {
+                try {
                     log('turn ' + (turn + 1));
                     for(var i=0;i<level.cells.length; i++) {
                         var cell = level.cells[i];
@@ -89,6 +109,7 @@
                         log('jsWarrior failed this level!');
                         return;
                     }
+
                     jsWarrior.turn();
                     
                     turn++;
@@ -102,10 +123,12 @@
                         clearInterval(interval);
                         return;
                     }
-                }, 100);
-            } catch(exception) {
-                log('jsWarrior failed this level!');
-            }
+                } catch(exception) {
+                    log(exception.toString());
+                    log('jsWarrior failed this level!');
+                    clearInterval(interval);
+                }
+            }, 100);
         };
     };
 
@@ -178,7 +201,6 @@
                 var cells = [];
                 for(var i=0; i<self.range; i++) {
 
-                    
                     if(self.pivoted) {
                         cells[i] = self.level.getCellContents(self.cell + (i+1)).object;
                     } else {
@@ -246,10 +268,8 @@
         self.moveVar = 1;
         self.level.setCellContents(self.currentCell, self);
         self.walk = function(direction) {
-            if(!direction) {
-                direction = 'forward';
-            }
-            if(direction === 'forward') {
+            
+            if(direction === 'forward' || direction == undefined) {
                 if(self.level.getCellContents(self.currentCell + self.moveVar).object.name === 'empty') {
                     self.level.setCellContents(self.currentCell, new Empty());
                     self.currentCell += self.moveVar;
@@ -273,18 +293,27 @@
             return false;
         }
 
-        self.check = function() {
-
+        self.check = function(direction) {
             var numCells = self.level.numCells;
             if(self.currentCell + self.moveVar >= numCells || self.currentCell + self.moveVar < 0) {
                 return 'wall';
             }
-            return self.level.getCellContents(self.currentCell + self.moveVar).object.name;
+            if(direction === 'forward' || direction === undefined) {
+                return self.level.getCellContents(self.currentCell + self.moveVar).object.name;    
+            } else if(direction === 'backward') {
+                return self.level.getCellContents(self.currentCell - self.moveVar).object.name;    
+            }
+            
         }
 
-        self.attack = function() {
-
-            var obj = self.level.getCellContents(self.currentCell + self.moveVar).object
+        self.attack = function(direction) {
+            var obj;
+            if(direction === 'forward' || direction === undefined) {
+                obj = self.level.getCellContents(self.currentCell + self.moveVar).object    
+            } else if(direction === 'backward') {
+                obj = self.level.getCellContents(self.currentCell - self.moveVar).object    
+            }
+            
 
             log('jsWarrior attempts to attack!');
             if(obj.name === 'enemy' || obj.name === 'captive') {
@@ -308,8 +337,15 @@
             }
         }
 
-        self.rescue = function() {
-            var obj = self.level.getCellContents(self.currentCell + self.moveVar).object
+        self.rescue = function(direction) {
+
+            var obj;
+            if(direction === 'forward' || direction === undefined) {
+                obj = self.level.getCellContents(self.currentCell + self.moveVar).object    
+            } else if(direction === 'backward') {
+                obj = self.level.getCellContents(self.currentCell - self.moveVar).object    
+            }
+            
 
             log('jsWarrior attempts to rescue!');
             if(obj.name === 'captive') {
@@ -321,11 +357,17 @@
 
         }
 
-        self.look = function() {
+        self.look = function(direction) {
             var array = [];
             var numCells = self.level.numCells;
+            var dir;
+            if(direction === 'forward' || direction === undefined) {
+                dir = 1;
+            } else if(direction === 'backward'){
+                dir = -1;
+            }
             for(var i=0; i<3; i++) {
-                var tCell = self.currentCell + ((i+1)*self.moveVar);
+                var tCell = self.currentCell + ((i+1)*self.moveVar) * dir;
                 if(tCell >= numCells || tCell < 0) {
                     array[i] = 'wall';
                     continue;
@@ -338,12 +380,19 @@
             return array;
         }
 
-        self.shoot = function() {
+        self.shoot = function(direction) {
             var array = [];
             var numCells = self.level.numCells;
+            var dir;
             log('jsWarrior shoots an arrow')
+
+            if(direction === 'forward' || direction === undefined) {
+                dir = 1;
+            } else if(direction === 'backward') {
+                dir = -1;
+            }
             for(var i=0; i<3; i++) {
-                var tCell = self.currentCell + ((i+1)*self.moveVar);
+                var tCell = self.currentCell + ((i+1)*self.moveVar) * dir;
                 if(tCell >= numCells || tCell < 0) {
                     log('arrow hits the wall!');
                     return;
