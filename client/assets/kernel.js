@@ -125,6 +125,11 @@
             log(options.type + ' is now free!');
             self.level.setCellContents(self.cell, new Empty());
         }
+
+        self.hit = function() {
+            log(options.type + ' died!');
+            self.level.setCellContents(self.cell, new Empty());    
+        }
     }
 
     function Enemy(options) {
@@ -283,7 +288,7 @@
             var obj = self.level.getCellContents(self.currentCell + self.moveVar).object
 
             log('jsWarrior attempts to attack!');
-            if(obj.name === 'enemy') {
+            if(obj.name === 'enemy' || obj.name === 'captive') {
                 log('jsWarrior inflicted ' + self.attackDamage + ' damage to the ' + obj.type);
                 obj.hit(self.attackDamage);
                 
