@@ -19,49 +19,51 @@
 
         var level = new Level(numCells, cells);
 
-        level.setCellContents(0, new Captive({
-            name: 'captive',
-            type: 'Captive',
-            cell: 0,
-            level: level
-        }));
+        // level.setCellContents(0, new Captive({
+        //     name: 'captive',
+        //     type: 'Captive',
+        //     cell: 0,
+        //     level: level
+        // }));
 
-        level.setCellContents(4, new Enemy({
+        level.setCellContents(3, new Enemy({
             name: 'enemy',
             type: 'Thick Sludge',
             attackType: 'melee',
             health: 25,
-            cell: 4,
+            cell: 3,
             level: level,
-            attackDamage: 3
+            attackDamage: 3,
+            pivoted: true
         }));
 
-        level.setCellContents(6, new Enemy({
+        level.setCellContents(1, new Enemy({
             name: 'enemy',
             type: 'Archer',
             attackType: 'ranged',
             range: 3,
             health: 10,
-            cell: 6,
+            cell: 1,
             level: level,
-            attackDamage: 3
+            attackDamage: 3,
+            pivoted: true
         }));
 
-        level.setCellContents(7, new Enemy({
-            name: 'enemy',
-            type: 'Archer',
-            attackType: 'ranged',
-            range: 3,
-            health: 10,
-            cell: 7,
-            level: level,
-            attackDamage: 3
-        }));
+        // level.setCellContents(7, new Enemy({
+        //     name: 'enemy',
+        //     type: 'Archer',
+        //     attackType: 'ranged',
+        //     range: 3,
+        //     health: 10,
+        //     cell: 7,
+        //     level: level,
+        //     attackDamage: 3
+        // }));
         
 
         var warrior = new Warrior({
             level: level,
-            currentCell: 2,
+            currentCell: 5,
             health: 20,
             attackDamage: 5
         });
@@ -137,6 +139,7 @@
         self.level = options.level;
         self.attackDamage = options.attackDamage;
         self.firstAttack = true;
+        self.pivoted = options.pivoted;
 
         self.hit = function(damage) {
             self.health -= damage;
@@ -149,8 +152,13 @@
 
         self.playTurn = function() {
             if(self.attackType === 'melee') {
-                var obj = self.level.getCellContents(self.cell - 1).object;
-
+                var obj; 
+                if(self.pivoted) {
+                    obj = self.level.getCellContents(self.cell + 1).object;
+                    
+                } else {
+                    obj = self.level.getCellContents(self.cell - 1).object;
+                }
                 if(obj.name === 'warrior') {
                     if(!self.firstAttack) {
                         obj.hit(self.attackDamage);
@@ -165,8 +173,13 @@
                 var warrior = null;
                 var cells = [];
                 for(var i=0; i<self.range; i++) {
-                    cells[i] = self.level.getCellContents(self.cell - (i+1)).object;
+
                     
+                    if(self.pivoted) {
+                        cells[i] = self.level.getCellContents(self.cell + (i+1)).object;
+                    } else {
+                        cells[i] = self.level.getCellContents(self.cell - (i+1)).object;    
+                    }
                     if(cells[i].name !== 'empty' && cells[i].name !== 'warrior') {
                         canAttack = false;
                     }
@@ -198,7 +211,7 @@
 
     function Level(num, lvl) {
         var self = this;
-
+        self.numCells = num;
         self.cells = [];
 
         for(var i=0; i<num; i++) {
@@ -226,25 +239,25 @@
         self.health = options.health;
         self.attackDamage = options.attackDamage;
         self.name = 'warrior';
-
+        self.moveVar = 1;
         self.level.setCellContents(self.currentCell, self);
         self.walk = function(direction) {
             if(!direction) {
                 direction = 'forward';
             }
             if(direction === 'forward') {
-                if(self.level.getCellContents(self.currentCell + 1).object.name === 'empty') {
+                if(self.level.getCellContents(self.currentCell + self.moveVar).object.name === 'empty') {
                     self.level.setCellContents(self.currentCell, new Empty());
-                    self.currentCell++;
+                    self.currentCell += self.moveVar;
                     self.level.setCellContents(self.currentCell, self);
                     
                     log('Walking to next cell! currentCell is ' + self.currentCell);
                     return true
                 }    
             } else if(direction === 'backward') {
-                if(self.level.getCellContents(self.currentCell - 1).object.name === 'empty') {
+                if(self.level.getCellContents(self.currentCell - self.moveVar).object.name === 'empty') {
                     self.level.setCellContents(self.currentCell, new Empty());
-                    self.currentCell--;
+                    self.currentCell -= self.moveVar
                     self.level.setCellContents(self.currentCell, self);
                     
                     log('Walking to next cell! currentCell is ' + self.currentCell);
@@ -257,12 +270,17 @@
         }
 
         self.check = function() {
-            return self.level.getCellContents(self.currentCell + 1).object.name;
+
+            var numCells = self.level.numCells;
+            if(self.currentCell + self.moveVar >= numCells || self.currentCell + self.moveVar < 0) {
+                return 'wall';
+            }
+            return self.level.getCellContents(self.currentCell + self.moveVar).object.name;
         }
 
         self.attack = function() {
 
-            var obj = self.level.getCellContents(self.currentCell + 1).object
+            var obj = self.level.getCellContents(self.currentCell + self.moveVar).object
 
             log('jsWarrior attempts to attack!');
             if(obj.name === 'enemy') {
@@ -287,7 +305,7 @@
         }
 
         self.rescue = function() {
-            var obj = self.level.getCellContents(self.currentCell + 1).object
+            var obj = self.level.getCellContents(self.currentCell + self.moveVar).object
 
             log('jsWarrior attempts to rescue!');
             if(obj.name === 'captive') {
@@ -300,6 +318,7 @@
         }
 
         self.pivot = function() {
+            log('jsWarrior turned!');
             self.moveVar *= -1;
         }
 
