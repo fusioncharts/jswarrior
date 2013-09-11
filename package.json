@@ -1,0 +1,14 @@
+{
+  "name": "jsWarrior",
+  "version": "0.0.1",
+  "description": "A turn-based programming game based on the RubyWarrior",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ameen Ahmed",
+  "license": "MIT",
+  "dependencies": {
+    "express": "~3.4.0"
+  }
+}
