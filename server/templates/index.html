@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}JSWarrior{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class='col-md-8'>
+        <h3>Play JS Warrior</h3>
+        <p>We're not going to weave some elaborate backstory. You're a good guy, and your objective is to get to the end of the levels. However, the only way you can control your character is through JavaScript. To beat JSWarrior you can't just mash buttons, you need to think up a strategy and program the strategy as a JavaScript function.</p>
+        <p>But what's the point? Sure you will probably get a great intellectual thrill of having programmed some primitive AI within 30 minutes. But there's also a cookie (a real cookie, the kind you can eat, not <code>document.cookie</code>) if you finish the game and happen to be in JSFoo. Simply show us the completed game, and we'll give you a cookie.</p>
+        <p><a class="btn btn-large btn-primary" href="{{startGameUrl}}">Go forth and play!</a></p>
+        <p><small>Please note you will need a Google account to play. Your email will be private, used to verify when we give you the cookie. And we hate spam and unsolicited email more than you do.</small></p>
+    </div>
+</div>
+{% endblock %}
