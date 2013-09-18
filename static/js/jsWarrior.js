@@ -112,6 +112,11 @@
                     } else if(obj.type === 'archer') {
                         $obj = $('<div/>').addClass('archer');
                     }
+
+                    if(!enemy.pivoted) {
+                        $obj.addClass('pivoted');
+                    }
+
                     $obj.css({
                         left: cellNum * (self.canvas.innerWidth() / numCells)
                     })
@@ -196,6 +201,7 @@
 
                     if(currentObject.name === 'warrior') {
                         if(currentObject.health > 0) {
+                            self.warrior.clearMove();
                             jsWarrior.turn(self.warrior);
                         }
                         
@@ -607,15 +613,31 @@
         self.name = 'warrior';
         self.moveVar = 1;
         self.level.setCellContents(self.currentCell, self);
-
+        self.moved = false;
 
         /**
          * Function     :   walk
          * Description  :   Makes the warrior walk to the next cell either forward or backward
          * Params       :   direction => 'forward' || 'backward'
          */
+        
+        self.setMove = function() {
+            if(!self.moved) {
+                self.moved = true;    
+            } else {
+                throw "jsWarrior cannot perform 2 moves in a turn!";
+            }
+            
+        };
+
+        self.clearMove = function() {
+            self.moved = false;
+        };
+
         self.walk = function(direction) {
+            self.setMove();
             // If direction is forward move to the next cell if it is empty
+            var dVar = self.moveVar * -1;
             if(direction === 'forward' || direction == undefined) {
                 if(self.level.getCellContents(self.currentCell + self.moveVar).object.name === 'empty') {
                     self.level.setCellContents(self.currentCell, new Empty());
@@ -623,7 +645,7 @@
                     self.level.setCellContents(self.currentCell, self);
 
                     $(self.renderObject).animate({
-                        left: self.level.getScreenPosition(self.currentCell - 1 + self.moveVar).x
+                        left: self.level.getScreenPosition(self.currentCell + dVar + self.moveVar).x
                     }, 50, function() {
                         log('Walking to next cell! currentCell is ' + self.currentCell);    
                     });
@@ -638,7 +660,7 @@
                     self.level.setCellContents(self.currentCell, self);
 
                     $(self.renderObject).animate({
-                        left: self.level.getScreenPosition(self.currentCell - 1 + self.moveVar).x
+                        left: self.level.getScreenPosition(self.currentCell + dVar + self.moveVar).x
                     }, 50, function() {
                         log('Walking to next cell! currentCell is ' + self.currentCell);    
                     });
@@ -649,7 +671,7 @@
             }
 
             $(self.renderObject).animate({
-                left: self.level.getScreenPosition(self.currentCell - 1 + self.moveVar + 1).x
+                left: self.level.getScreenPosition(self.currentCell + dVar + self.moveVar + 1).x
             }, 50, function() {
                 $(self.renderObject).animate({
                     left: self.level.getScreenPosition(self.currentCell).x
@@ -688,6 +710,7 @@
          * Params       :   direction =? 'forward' || 'backward'
          */
         self.attack = function(direction) {
+            self.setMove();
             var obj;
             if(direction === 'forward' || direction === undefined) {
                 obj = self.level.getCellContents(self.currentCell + self.moveVar).object    
@@ -749,7 +772,7 @@
          * Description  :   Called when the warrior needs rest. Makes the warrior gain 2 health points
          */
         self.rest = function(damage) {
-
+            self.setMove();
             self.renderObject.addClass('warrior-rest');
             setTimeout(function() {
                 log('jsWarrior rested and got 2 health!');
@@ -784,7 +807,7 @@
          * Params       :   direction => 'forward' || 'backward'
          */
         self.rescue = function(direction) {
-
+            self.setMove();
             var obj;
             if(direction === 'forward' || direction === undefined) {
                 obj = self.level.getCellContents(self.currentCell + self.moveVar).object    
@@ -848,6 +871,7 @@
          * Params       :   direction => 'forward' || 'backward'
          */
         self.shoot = function(direction) {
+            self.setMove();
             var array = [];
             var numCells = self.level.numCells;
             var dir;
@@ -885,7 +909,13 @@
          * Description  :   turns the jsWarrior to the opposite direction
          */
         self.pivot = function() {
+            self.setMove();
             log('jsWarrior turned!');
+            if(!self.renderObject.hasClass('pivoted')) {
+                self.renderObject.addClass('pivoted');
+            } else {
+                self.renderObject.removeClass('pivoted');
+            }
             self.moveVar *= -1;
         }
 

@@ -41,12 +41,6 @@
     top: 300px;
     width: 38px;
     height: 54px;
-    -moz-transform: scaleX(-1);
-    -o-transform: scaleX(-1);
-    -webkit-transform: scaleX(-1);
-    transform: scaleX(-1);
-    filter: FlipH;
-    -ms-filter: "FlipH";
 }
 
 .thick-sludge {
@@ -57,12 +51,6 @@
     top: 300px;
     width: 83px;
     height: 84px;
-    -moz-transform: scaleX(-1);
-    -o-transform: scaleX(-1);
-    -webkit-transform: scaleX(-1);
-    transform: scaleX(-1);
-    filter: FlipH;
-    -ms-filter: "FlipH";
 }
 
 .archer {
@@ -73,12 +61,6 @@
     top: 300px;
     width: 94px;
     height: 99px;
-    -moz-transform: scaleX(-1);
-    -o-transform: scaleX(-1);
-    -webkit-transform: scaleX(-1);
-    transform: scaleX(-1);
-    filter: FlipH;
-    -ms-filter: "FlipH";
 }
 
 .archer-with-arrow {
@@ -108,4 +90,13 @@
     position: absolute;
     background: #888;
     border: 1px solid #aaa;
+}
+
+.pivoted {
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
 }

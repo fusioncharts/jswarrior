@@ -117,6 +117,7 @@
                         "attackType": "melee",
                         type: "sludge",
                         cell: item[0],
+                        pivoted: item[2] ? true : false,
                         health: 12,
                         attackDamage: 3
                     });
@@ -127,6 +128,7 @@
                         "attackType": "melee",
                         type: "thick sludge",
                         cell: item[0],
+                        pivoted: item[2] ? true : false,
                         health: 24,
                         attackDamage: 3
                     });
