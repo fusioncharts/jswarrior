@@ -89,4 +89,69 @@
             clearInterval(interval);
         };
     }
+
+    window.makeWarriorLevel = function(count, target, contents) {
+        var cells = [];
+
+        for(var i = 0; i < contents.length; i ++) {
+            var item = contents[i];
+
+            switch(item[1]){
+                case "warrior":
+                    cells.push({
+                        name: 'warrior',
+                        cell: item[0],
+                        health: 20,
+                        attackDamage: 5
+                    });
+                    break;
+                case "orc":
+                    cells.push({
+                        name: 'enemy',
+                        "attackType": "melee",
+                        type: "Orc",
+                        cell: item[0],
+                        health: 12,
+                        attackDamage: 3
+                    });
+                    break;
+                case "troll":
+                    cells.push({
+                        name: 'enemy',
+                        "attackType": "melee",
+                        type: "Troll",
+                        cell: item[0],
+                        health: 24,
+                        attackDamage: 3
+                    });
+                    break;
+                case "archer":
+                    cells.push({
+                        name: 'enemy',
+                        "range": 3,
+                        "attackType": "ranged",
+                        type: "Archer",
+                        cell: item[0],
+                        pivoted: item[2] ? true : false,
+                        health: 7,
+                        attackDamage: 3
+                    });
+                    break;
+                case "captive":
+                    cells.push({
+                        name: 'captive',
+                        type: 'Captive',
+                        cell: item[0]
+                    });
+                    break;
+                default:
+                    alert("unrecognized level type")
+            }
+        }
+        return {
+            numCells: count,
+            target: target,
+            cells: cells
+        };
+    }
 })(jQuery);
