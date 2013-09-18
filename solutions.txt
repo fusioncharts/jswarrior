@@ -1,0 +1,165 @@
+Level 1:
+===========
+
+jsWarrior.turn = function(warrior) {
+    return warrior.walk();
+}
+
+Level 2:
+===========
+jsWarrior.turn = function(warrior) {
+  if(warrior.check() == "enemy")
+  {
+    warrior.attack();
+  }
+  else{
+    warrior.walk();
+  }
+}
+
+Level 3:
+============
+jsWarrior.turn = function(warrior) {
+  if(warrior.check() == "enemy")
+  {
+    warrior.attack();
+  }
+  else{
+    if(warrior.health < 15)
+    {
+      warrior.rest();
+    }
+    else {
+		warrior.walk();
+    }
+  }
+}
+
+Level 4:
+===============
+
+jsWarrior.turn = function(warrior) {
+  warrior.last_known_health = warrior.last_known_health ? warrior.last_known_health : warrior.health;
+  if(warrior.check() == "enemy")
+  {
+    warrior.attack();
+  }
+  else{
+    if(warrior.health < warrior.last_known_health)
+    {
+      warrior.walk();
+    }
+    else if(warrior.health < 15)
+    {
+      warrior.rest();
+    }
+    else {
+	  warrior.walk();
+    }
+  }
+  warrior.last_known_health = warrior.health;
+}
+
+Level 5:
+===============
+
+jsWarrior.turn = function(warrior) {
+  warrior.last_known_health = warrior.last_known_health ? warrior.last_known_health : warrior.health;
+  if(warrior.check() == "enemy")
+  {
+    warrior.attack();
+  }
+  else if(warrior.check() == "captive")
+  {
+    warrior.rescue();
+  }
+  else{
+    if(warrior.health < warrior.last_known_health)
+    {
+      warrior.walk();
+    }
+    else if(warrior.health < 15)
+    {
+      warrior.rest();
+    }
+    else {
+	  warrior.walk();
+    }
+  }
+  warrior.last_known_health = warrior.health;
+}
+
+Level 6:
+==============
+
+jsWarrior.turn = function(warrior) {
+  warrior.last_known_health = warrior.last_known_health ? warrior.last_known_health : warrior.health;
+  if(warrior.check() == "enemy")
+  {
+    warrior.attack();
+  }
+  else if(warrior.check() == "captive")
+  {
+    warrior.rescue();
+  }
+  else{
+    if(warrior.health < warrior.last_known_health)
+    {
+      if(warrior.health < 8)
+	    warrior.walk("backward");
+      else
+        warrior.walk("forward");
+    }
+    else
+    {
+      if(warrior.health < 15)
+      {
+        warrior.rest();
+      }
+      else{
+        warrior.walk();
+      }
+    }
+  }
+  warrior.last_known_health = warrior.health;
+}
+
+Level 7:
+===============
+
+jsWarrior.turn = function(warrior) {
+  warrior.last_known_health = warrior.last_known_health ? warrior.last_known_health : warrior.health;
+
+  if(warrior.check() == "wall")
+  {
+    warrior.pivot();
+  }
+  if(warrior.check() == "enemy")
+  {
+    warrior.attack();
+  }
+  else if(warrior.check() == "captive")
+  {
+    warrior.rescue();
+  }
+  else{
+    if(warrior.health < warrior.last_known_health)
+    {
+      if(warrior.health < 8)
+	    warrior.walk("backward");
+      else
+        warrior.walk("forward");
+    }
+    else
+    {
+      if(warrior.health < 15)
+      {
+        warrior.rest();
+      }
+      else{
+        warrior.walk();
+      }
+    }
+  }
+  warrior.last_known_health = warrior.health;
+}
