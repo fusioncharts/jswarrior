@@ -18,7 +18,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 class Submission (db.Model):
     level = db.IntegerProperty()
     user = db.UserProperty(required=True, auto_current_user=True)
-    code = db.StringProperty()
+    code = db.StringProperty(multiline=True)
     submission_time = db.DateTimeProperty(required=True,auto_now=True)
 
 def get_default_template_values (requireLogin):
@@ -67,8 +67,7 @@ class CompleteHandler (webapp2.RequestHandler):
             logging.info("Found an existing submission")
             sub = sqres[0]
 
-        # TODO: add the code here
-        sub.code = ""
+        sub.code = self.request.get('code', '')
         sub.put()
 
         self.response.write ("/level/" + nextlevel)
@@ -78,6 +77,22 @@ class LevelHandler (webapp2.RequestHandler):
         nocheating(self.response)
         template_values = get_default_template_values(True)
         template_values['levelId'] = int(levelId)
+
+        sq = Submission.all()
+        sq.filter('user =', users.get_current_user())
+        sq.filter('level =', int(levelId))
+        sqres = sq.fetch(limit=5)
+        if len(sqres) > 0:
+            sub = sqres[0]
+            template_values['code'] = sub.code
+        else:
+            sq = Submission.all()
+            sq.filter('user =', users.get_current_user())
+            sq.filter('level =', int(levelId) - 1)
+            sqres = sq.fetch(limit=5)
+
+            if len(sqres) > 0:
+                template_values['code'] = sqres[0].code
 
         template = JINJA_ENVIRONMENT.get_template('level.html')
         self.response.write(template.render(template_values))

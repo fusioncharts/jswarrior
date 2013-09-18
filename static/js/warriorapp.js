@@ -76,7 +76,7 @@
         self.play = function () {
             logDiv = $("#logContainer");
             logDiv.empty();
-            var code = textCM.getValue();
+            code = textCM.getValue();
             $("#playButton").attr("disabled", "disabled");
 
             game = new JSWarrior(self.onLog, self.onLevelComplete, self.onLevelFailed);
