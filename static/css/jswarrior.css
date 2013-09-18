@@ -1,0 +1,111 @@
+#canvas {
+    height: 400px;
+    background: #242424;
+}
+
+.warrior {
+    background: url('/static/images/warrior.png');
+    background-size: 68px 74px;
+    position: absolute;
+    left: 20px;
+    top: 300px;
+    width: 68px;
+    height: 74px;
+}
+
+.warrior-rest {
+    background: url('/static/images/warrior_rest_1.png');
+    background-repeat: no-repeat; 
+}
+
+.captive {
+    background: url('/static/images/captive.png');
+    background-repeat: no-repeat;
+    background-size: 38px 48px;
+    position: absolute;
+    top: 300px;
+    width: 38px;
+    height: 48px;
+}
+
+.captive-free {
+    background: url('/static/images/captive_free.png');
+}
+
+.sludge {
+    background: url('/static/images/sludge_normal.png');
+    background-size: 38px 54px;
+    background-position: 38px 54px;
+    position: absolute;
+    left: 20px;
+    top: 300px;
+    width: 38px;
+    height: 54px;
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
+}
+
+.thick-sludge {
+    background: url('/static/images/thick_sludge_normal.png');
+    background-size: 83px 84px;
+    position: absolute;
+    left: 20px;
+    top: 300px;
+    width: 83px;
+    height: 84px;
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
+}
+
+.archer {
+    background: url('/static/images/archer_normal.png');
+    background-size: 94px 99px;
+    position: absolute;
+    left: 20px;
+    top: 300px;
+    width: 94px;
+    height: 99px;
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
+}
+
+.archer-with-arrow {
+    background: url('/static/images/archer_with_arrow.png');
+    background-size: 94px 116px;
+    width: 94px;
+    height: 116px;
+    top: 280px;
+}
+
+.archer-shoot {
+    background: url('/static/images/archer_shoot.png');
+    background-size: 94px 116px;
+    width: 94px;
+    height: 116px;
+    top: 280px;
+}
+
+.archer-hit {
+    background: url('/static/images/archer_hit.png');
+    background-size: 94px 116px;
+    width: 94px;
+    height: 116px;
+}
+
+.cell {
+    position: absolute;
+    background: #888;
+    border: 1px solid #aaa;
+}

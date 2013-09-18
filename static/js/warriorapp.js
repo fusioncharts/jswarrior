@@ -10,6 +10,12 @@
     $(function() {
         configureCodemirror();
         configureToolbar ();
+
+        // Change the canvas size
+        
+
+
+        window.game = new JSWarrior($('#canvas'));
     });
 
     // State Variables
@@ -35,7 +41,6 @@
         var self = this,
             levelCompleteCallback = function(){},
             code = "",
-            game = null,
             logDiv = $("#logContainer"),
             interval;
 
@@ -79,7 +84,8 @@
             code = textCM.getValue();
             $("#playButton").attr("disabled", "disabled");
 
-            game = new JSWarrior(self.onLog, self.onLevelComplete, self.onLevelFailed);
+            game.setCallbacks(self.onLog, self.onLevelComplete, self.onLevelFailed);
+            
             game.createLevel(window.currentLevel);
             interval = game.run(code);
         };
@@ -105,21 +111,21 @@
                         attackDamage: 5
                     });
                     break;
-                case "orc":
+                case "sludge":
                     cells.push({
                         name: 'enemy',
                         "attackType": "melee",
-                        type: "Orc",
+                        type: "sludge",
                         cell: item[0],
                         health: 12,
                         attackDamage: 3
                     });
                     break;
-                case "troll":
+                case "thick sludge":
                     cells.push({
                         name: 'enemy',
                         "attackType": "melee",
-                        type: "Troll",
+                        type: "thick sludge",
                         cell: item[0],
                         health: 24,
                         attackDamage: 3
@@ -130,7 +136,7 @@
                         name: 'enemy',
                         "range": 3,
                         "attackType": "ranged",
-                        type: "Archer",
+                        type: "archer",
                         cell: item[0],
                         pivoted: item[2] ? true : false,
                         health: 7,

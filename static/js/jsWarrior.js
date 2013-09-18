@@ -24,7 +24,7 @@
      * Params       :  log => A function which is called by the entities of the
      *                         game whenever an action occurs
      */
-    var JSWarrior = function JSWarrior(log, onLevelComplete, onLevelFail) {
+    var JSWarrior = function JSWarrior(canvas) {
         var self = this,
             cells = [],
             interval;
@@ -33,6 +33,20 @@
         var MAX_TURNS = 100;
         var TURN_TIME = 1000;
 
+        self.canvas = canvas;
+
+        self.callbacks = {};
+
+        var log = function() {};
+        var onLevelComplete = function() {};
+        var onLevelFail = function() {};
+
+        self.setCallbacks = function(_log, _onLevelComplete, _onLevelFail) {
+            log = _log;
+            onLevelComplete = _onLevelComplete;
+            onLevelFail = _onLevelFail;
+        }
+        
         /**
          * Function     :   createLevel
          * Description  :   Use this function to create the level
@@ -44,14 +58,29 @@
                 cells = levelObj.cells,
                 initCells = [];
 
+            self.level = null;
+            self.warrior = null;
 
             // Initialize the level with
             for(var i=0; i<numCells; i++) {
                 initCells[i] = new Empty();
             }
 
+            var w = self.canvas.innerWidth() / numCells;
+            for(var i=0; i< numCells; i++) {
+                self.canvas.append(
+                    $('<div/>').addClass('cell')
+                    .css({
+                        'width': w,
+                        'height': 100,
+                        'left': i * w,
+                        'top': 300
+                    })
+                )
+            }
+
             // Create a new level
-            self.level = new Level(numCells, target, initCells);
+            self.level = new Level(numCells, target, initCells, self.canvas.innerWidth(), self.canvas.innerHeight());
 
             // Loop through the level object and create the necessary objects and put
             // them into the cells in the level
@@ -73,12 +102,46 @@
                 obj.level = self.level;
 
                 if(obj.name === 'enemy') {
-                    self.level.setCellContents(cellNum, new Enemy(obj, log));
+                    var enemy = new Enemy(obj, log, self.context);
+                    self.level.setCellContents(cellNum, enemy);
+                    var $obj;
+                    if(obj.type === 'sludge') {
+                        $obj = $('<div/>').addClass('sludge');
+                    } else if(obj.type === 'thick sludge') {
+                        $obj = $('<div/>').addClass('thick-sludge');
+                    } else if(obj.type === 'archer') {
+                        $obj = $('<div/>').addClass('archer');
+                    }
+                    $obj.css({
+                        left: cellNum * (self.canvas.innerWidth() / numCells)
+                    })
+                    self.canvas.append($obj);
+
+                    enemy.renderObject = $obj;
                 } else if(obj.name === 'captive') {
-                    self.level.setCellContents(cellNum, new Captive(obj, log));
+                    var captive = new Captive(obj, log, self.context);
+                    self.level.setCellContents(cellNum, captive);
+                    var $obj = $('<div/>').addClass('captive');
+
+                    self.canvas.append($obj);
+
+                    $obj.css({
+                        left: cellNum * (self.canvas.innerWidth() / numCells)
+                    })
+
+                    captive.renderObject = $obj;
                 } else if(obj.name === 'warrior') {
                     if(!self.warrior) {
-                        self.warrior = new Warrior(obj, log);
+
+                        self.warrior = new Warrior(obj, log, self.context);
+                        var $obj = $('<div/>').addClass('warrior');
+                        $obj.css({
+                            left: cellNum * (self.canvas.innerWidth() / numCells)
+                        })
+                        self.canvas.append($obj);
+
+                        self.warrior.renderObject = $obj;
+
                     } else {
                         throw "Cannot create two warriors in a level";
                     }
@@ -87,6 +150,9 @@
                 }
             }
         }
+        self.currentMove = 'other';
+
+
 
         var global = (typeof window === 'undefined') ? global : window;
         global.jsWarrior = {};
@@ -106,36 +172,85 @@
 
             var turn = 0;
 
+            var runCell = 0;
+            function copyCells (array) {
+                var arr = [];
+                for(var i=0; i<array.length; i++) {
+                    arr.push(array[i]);
+                }
+                return arr;
+            }
+            log('turn ' + (turn + 1));
+            var cells = copyCells(self.level.cells);
             // Start running the code turn by turn each turn is executed every 100ms currently 
             interval = setInterval(function() {
+                
                 var level = self.level;
+
+
                 try {
-                    log('turn ' + (turn + 1));
+                    
+                    
+
+                    var currentObject = cells[runCell].object;
+
+                    if(currentObject.name === 'warrior') {
+                        if(currentObject.health > 0) {
+                            jsWarrior.turn(self.warrior);
+                        }
+                        
+                        runCell++;
+                        
+                    } else if(currentObject.name === 'enemy' || currentObject.name === 'captive') {
+                        if(currentObject.health > 0) {
+                            currentObject.playTurn();    
+                        }
+                        
+                        runCell++;
+                    } else {
+                        runCell++;
+                    }
+
+                    if(runCell === level.numCells) {
+                        turn++;
+                        log('turn ' + (turn + 1));
+                        runCell = 0;
+                    }
 
                     // Loop through the level and find enemies and make them do their action for
                     // this turn
-                    for(var i=0;i<level.cells.length; i++) {
-                        var cell = level.cells[i];
-                        
-                        if(cell.object.name === 'enemy') {
-                            cell.object.playTurn();
-                        }
-                    }
 
-                    // Check warrior's health. If its 0 warrior died :( stop the code execution
+                    // if(self.currentMove === 'other') {
+                    //     for(var i=0;i<level.cells.length; i++) {
+                    //         var cell = level.cells[i];
+                            
+                    //         if(cell.object.name === 'enemy') {
+                    //             cell.object.playTurn();
+                    //         }
+                    //     }
+                    // }
+
+
+                    // // Check warrior's health. If its 0 warrior died :( stop the code execution
                     if(self.warrior.health <= 0) {
                         clearInterval(interval);
                         onLevelFail ();
+                        self.warrior.die();
                         log('jsWarrior died!');
                         log('jsWarrior failed this level!');
                         return;
                     }
-                    // Run the turn code provided by the user
-                    jsWarrior.turn(self.warrior);
-                    
-                    turn++;
+                    // // Run the turn code provided by the user
+                    // if(self.currentMove === 'warrior') {
+                    //     jsWarrior.turn(self.warrior);
+                    //     warrior.draw(context, function() {
+                    //         self.currentMove = 'rest';
+                    //     })
+                    // }
+                        
+                    // turn++;
 
-                    // Only 100 turns can be played if it exceeds js warrior failed
+                    // // Only 100 turns can be played if it exceeds js warrior failed
                     if(turn === 100) {
                         clearInterval(interval);
                         log('jsWarrior failed this level!');
@@ -143,7 +258,7 @@
                         return;
                     }
 
-                    // If jsWarrior is at the target cell he won :)
+                    // // If jsWarrior is at the target cell he won :)
                     if(self.warrior.getCurrentCell() === self.level.target) {
                         log('Hurray you completed this level!');
                         clearInterval(interval);
@@ -160,7 +275,7 @@
                     onLevelFail ();
                     throw exception;
                 }
-            }, 100);
+            }, 250);
 
             return interval;
         };
@@ -196,8 +311,23 @@
             self.bound = false;
 
             // tell the user that the captive is free and clear the cell in the level
-            log(options.type + ' is now free!');
-            self.level.setCellContents(self.cell, new Empty());
+            self.renderObject.addClass('captive-free');
+            self.renderObject.animate({
+                opacity: 0
+            }, 300, function() {
+                self.renderObject.animate({
+                    opacity: 1
+                }, 300, function() {
+                    self.renderObject.animate({
+                        opacity: 0
+                    }, 300, function() {
+                        log(options.type + ' is now free!');
+                        self.level.setCellContents(self.cell, new Empty());
+                    });
+                });
+            });
+                
+
         }
 
         /**
@@ -205,8 +335,21 @@
          * Description  :   Called to hit this captive. The captive instantly dies when gets hit.
          */
         self.hit = function() {
-            log(options.type + ' died!');
-            self.level.setCellContents(self.cell, new Empty());    
+            self.renderObject.animate({
+                opacity: 0
+            }, 300, function() {
+                self.renderObject.animate({
+                    opacity: 1
+                }, 300, function() {
+                    self.renderObject.animate({
+                        opacity: 0
+                    }, 300, function() {
+                        log(options.type + ' died!');
+                        self.level.setCellContents(self.cell, new Empty());
+                    });
+                });
+            });
+
         }
     }
 
@@ -229,7 +372,7 @@
      *
      *                 log: The function which is executed for every action performed by or this object
      */
-    function Enemy(options, log) {
+    function Enemy(options, log, context) {
         var self = this;
 
         self.name = 'enemy';
@@ -242,7 +385,26 @@
         self.attackDamage = options.attackDamage;
         self.firstAttack = true;
         self.pivoted = options.pivoted;
+        self.context = context;
 
+
+
+        self.die = function() {
+
+            self.renderObject.animate({
+                opacity: 0
+            }, 300, function() {
+                self.renderObject.animate({
+                    opacity: 1
+                }, 300, function() {
+                    self.renderObject.animate({
+                        opacity: 0
+                    }, 300, function() {
+
+                    });
+                });
+            });
+        };
         /**
          * Function     :   hit
          * Description  :   Called when the enemy is hit
@@ -250,12 +412,34 @@
          */
         self.hit = function(damage) {
             self.health -= damage;
-            
-            // If health is <= 0 the enemy died. Tell the user and clear the cell in the level
-            if(self.health <= 0) {
-                log(self.type + ' died!');
-                self.level.setCellContents(self.cell, new Empty());
+            if(self.type === 'archer') {
+                self.renderObject.addClass('archer-hit')
             }
+            // If health is <= 0 the enemy died. Tell the user and clear the cell in the level
+            self.renderObject.animate({
+                left: self.level.getScreenPosition(self.cell).x + 10
+            }, 50, function() {
+                self.renderObject.animate({
+                    left: self.level.getScreenPosition(self.cell).x - 10
+                }, 50, function() {
+                    self.renderObject.animate({
+                        left: self.level.getScreenPosition(self.cell).x + 10
+                    }, 50, function() {
+                        self.renderObject.animate({
+                            left: self.level.getScreenPosition(self.cell).x
+                        }, 50, function() {
+                            self.renderObject.removeClass('archer-hit')
+                            if(self.health <= 0) {
+                                log(self.type + ' died!');
+                                self.level.setCellContents(self.cell, new Empty());
+                                
+                                self.die();
+                            }
+                        });
+                    });
+                });
+            })
+                            
         }
 
         /**
@@ -274,8 +458,18 @@
                 }
                 if(obj.name === 'warrior') {
                     if(!self.firstAttack) {
-                        obj.hit(self.attackDamage);
-                        log(self.type + ' hits jsWarrior and deals ' + self.attackDamage + ' damage!');
+
+                        self.renderObject.animate({
+                            left: self.level.getScreenPosition(obj.currentCell).x
+                        }, 50, function() {
+                            self.renderObject.animate({
+                                left: self.level.getScreenPosition(self.cell).x
+                            }, 50, function() {
+                                obj.hit(self.attackDamage);
+                                log(self.type + ' hits jsWarrior and deals ' + self.attackDamage + ' damage!');
+                            });
+                        });
+                        
                     } else {
                         self.firstAttack = false;
                     }       
@@ -297,7 +491,9 @@
                     if(cells[i].name !== 'empty' && cells[i].name !== 'warrior') {
                         canAttack = false;
                     }
+
                     if(cells[i].name === 'warrior') {
+
                         warrior =  cells[i];
                     }
                 }
@@ -305,8 +501,18 @@
                 if(canAttack && warrior) {
 
                     if(!self.firstAttack) {
-                        warrior.hit(self.attackDamage);
-                        log(self.type + ' hits jsWarrior and deals ' + self.attackDamage + ' damage!');    
+
+                        self.renderObject.addClass('archer-with-arrow');
+                        setTimeout(function() {
+                            self.renderObject.removeClass('archer-with-arrow');
+                            self.renderObject.addClass('archer-shoot');
+                            setTimeout(function() {
+                                self.renderObject.removeClass('archer-shoot');
+                                warrior.hit(self.attackDamage);
+                                log(self.type + ' hits jsWarrior and deals ' + self.attackDamage + ' damage!');    
+                            }, 100);    
+                        }, 100);
+                        
                     }
                     self.firstAttack = false;
                 } else {
@@ -334,16 +540,30 @@
      *                  target => the target cell for the warrior to be to win this level
      *                  lvl => the lvl array which contains the objects
      */
-    function Level(num, target, lvl) {
+    function Level(num, target, lvl, width, height) {
         var self = this;
         self.numCells = num;
         self.target = target;
         self.cells = [];
 
+        self.width = width;
+        self.height = height;
+
         // Initialize the cells
         for(var i=0; i<num; i++) {
             self.cells.push(new Cell(lvl[i]));
         }
+
+        self.getCellWidth = function() {
+            return self.width / self.numCells;
+        };
+
+        self.getScreenPosition = function(cellNum) {
+            return {
+                x: (self.width / self.numCells) * cellNum,
+                y: self.height - 60
+            };
+        };
 
         // Getter for a cell when index is provided
         self.getCellContents = function(index) {
@@ -388,6 +608,7 @@
         self.moveVar = 1;
         self.level.setCellContents(self.currentCell, self);
 
+
         /**
          * Function     :   walk
          * Description  :   Makes the warrior walk to the next cell either forward or backward
@@ -400,8 +621,13 @@
                     self.level.setCellContents(self.currentCell, new Empty());
                     self.currentCell += self.moveVar;
                     self.level.setCellContents(self.currentCell, self);
+
+                    $(self.renderObject).animate({
+                        left: self.level.getScreenPosition(self.currentCell - 1 + self.moveVar).x
+                    }, 50, function() {
+                        log('Walking to next cell! currentCell is ' + self.currentCell);    
+                    });
                     
-                    log('Walking to next cell! currentCell is ' + self.currentCell);
                     return true
                 }    
             } else if(direction === 'backward') {
@@ -410,14 +636,29 @@
                     self.level.setCellContents(self.currentCell, new Empty());
                     self.currentCell -= self.moveVar
                     self.level.setCellContents(self.currentCell, self);
+
+                    $(self.renderObject).animate({
+                        left: self.level.getScreenPosition(self.currentCell - 1 + self.moveVar).x
+                    }, 50, function() {
+                        log('Walking to next cell! currentCell is ' + self.currentCell);    
+                    });
                     
-                    log('Walking to next cell! currentCell is ' + self.currentCell);
+                    
                     return true
                 }
             }
-            
+
+            $(self.renderObject).animate({
+                left: self.level.getScreenPosition(self.currentCell - 1 + self.moveVar + 1).x
+            }, 50, function() {
+                $(self.renderObject).animate({
+                    left: self.level.getScreenPosition(self.currentCell).x
+                }, 50, function() {
+                    log('Cannot walk to next cell!');        
+                });
+            });
             // Oh oh something is blocking the warrior's path
-            log('Cannot walk to next cell!');
+            
             return false;
         }
 
@@ -454,19 +695,26 @@
                 obj = self.level.getCellContents(self.currentCell - self.moveVar).object    
             }
             
-
-            log('jsWarrior attempts to attack!');
-
-            // If the next cell is an enemy or a captive hit that bitch
-            if(obj.name === 'enemy' || obj.name === 'captive') {
-                log('jsWarrior inflicted ' + self.attackDamage + ' damage to the ' + obj.type);
-                obj.hit(self.attackDamage);
-                
-            } else {
-                // If the next cell is empty or a wall, warrior hits nothing and looks ridiculous attacking an empty
-                // space maybe he smoked pot today
-                log('jsWarrior warrior hit nothing!');
-            }
+            $(self.renderObject).animate({
+                left: self.level.getScreenPosition(self.currentCell - 1 + self.moveVar + 1).x
+            }, 50, function() {
+                $(self.renderObject).animate({
+                    left: self.level.getScreenPosition(self.currentCell).x
+                }, 50, function() {
+                    log('jsWarrior attempts to attack!');
+                    // If the next cell is an enemy or a captive hit that bitch
+                    if(obj.name === 'enemy' || obj.name === 'captive') {
+                        log('jsWarrior inflicted ' + self.attackDamage + ' damage to the ' + obj.type);
+                        obj.hit(self.attackDamage);
+                        
+                    } else {
+                        // If the next cell is empty or a wall, warrior hits nothing and looks ridiculous attacking an empty
+                        // space maybe he smoked pot today
+                        log('jsWarrior warrior hit nothing!');
+                        
+                    }
+                });
+            });
         }
 
         /**
@@ -476,6 +724,24 @@
          */
         self.hit = function(damage) {
             self.health -= damage;
+        
+            self.renderObject.animate({
+                left: self.level.getScreenPosition(self.currentCell).x + 10
+            }, 50, function() {
+                self.renderObject.animate({
+                    left: self.level.getScreenPosition(self.currentCell).x - 10
+                }, 50, function() {
+                    self.renderObject.animate({
+                        left: self.level.getScreenPosition(self.currentCell).x + 10
+                    }, 50, function() {
+                        self.renderObject.animate({
+                            left: self.level.getScreenPosition(self.currentCell).x
+                        }, 50, function() {
+                            console.log('Hit!');
+                        });
+                    });
+                });
+            });
         }
 
         /**
@@ -483,11 +749,33 @@
          * Description  :   Called when the warrior needs rest. Makes the warrior gain 2 health points
          */
         self.rest = function(damage) {
-            log('jsWarrior rested and got 2 health!');
-            self.health += 2;
-            if(self.health > 20) {
-                self.health = 20;
-            }
+
+            self.renderObject.addClass('warrior-rest');
+            setTimeout(function() {
+                log('jsWarrior rested and got 2 health!');
+                self.health += 2;
+                self.renderObject.removeClass('warrior-rest');
+                if(self.health > 20) {
+                    self.health = 20;
+                }
+            }, 200);
+                
+        };
+
+        self.die = function() {
+            self.renderObject.animate({
+                opacity: 0
+            }, 300, function() {
+                self.renderObject.animate({
+                    opacity: 1
+                }, 300, function() {
+                    self.renderObject.animate({
+                        opacity: 0
+                    }, 300, function() {
+
+                    });
+                });
+            });
         }
 
         /**
@@ -504,18 +792,26 @@
                 obj = self.level.getCellContents(self.currentCell - self.moveVar).object    
             }
             
+            $(self.renderObject).animate({
+                left: self.level.getScreenPosition(self.currentCell - 1 + self.moveVar + 1).x
+            }, 50, function() {
+                $(self.renderObject).animate({
+                    left: self.level.getScreenPosition(self.currentCell).x
+                }, 50, function() {
+                    log('jsWarrior attempts to rescue!');
 
-            log('jsWarrior attempts to rescue!');
+                    // If the specified cell contains a captive warrior recues him hurray!
+                    if(obj.name === 'captive') {
+                        log('jsWarrior rescues ' + obj.type + ' !');
+                        obj.free();
+                    } else {
+                        // If the warrior attempts to rescue a cell without a captive he rescues nothing
+                        log('jsWarrior rescues nothing!');
+                    }
 
-            // If the specified cell contains a captive warrior recues him hurray!
-            if(obj.name === 'captive') {
-                log('jsWarrior rescues ' + obj.type + ' !');
-                obj.free();
-            } else {
-                // If the warrior attempts to rescue a cell without a captive he rescues nothing
-                log('jsWarrior rescues nothing!');
-            }
-
+                });
+            });
+                    
         }
 
         /**

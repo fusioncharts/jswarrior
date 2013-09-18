@@ -6,7 +6,7 @@
 window.currentLevel = window.makeWarriorLevel(9, 8, [
     [0, 'captive'],
     [2, 'warrior'],
-    [4, 'troll'],
+    [4, 'thick sludge'],
     [6, 'archer'],
     [7, 'archer']
 ]);
