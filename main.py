@@ -94,7 +94,7 @@ class LevelHandler (webapp2.RequestHandler):
             if len(sqres) > 0:
                 template_values['code'] = sqres[0].code
 
-        template_values['hintFile'] = "hints/hint%d.html" % levelId
+        template_values['hintFile'] = "hints/hint%d.html" % int(levelId)
         template = JINJA_ENVIRONMENT.get_template('level.html')
         self.response.write(template.render(template_values))
 
