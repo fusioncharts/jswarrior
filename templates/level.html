@@ -17,14 +17,18 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-4">
         <ul class="nav nav-tabs" id="myTab">
-            <li class="active"><a href="#console" data-toggle="tab">Console</a></li>
+            <li class="active"><a href="#hints" data-toggle="tab">Hints</a></li>
+            <li><a href="#console" data-toggle="tab">Console</a></li>
             <li><a href="#apiref" data-toggle="tab">API Reference</a></li>
         </ul>
 
         <div class="tab-content">
-            <div class="tab-pane active" id="console">
+            <div class="tab-pane active" id="hints">
+                {% include hintFile %}
+            </div>
+            <div class="tab-pane" id="console">
                 <div class="textareaContainer">
                     <div id="logContainer">
 
@@ -36,7 +40,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div class="btn-toolbar">
             <div class="btn-group">
                 <button type="button" id="playButton" class="btn btn-default btn-primary"><span class="glyphicon glyphicon-play"></span> Run</button>
