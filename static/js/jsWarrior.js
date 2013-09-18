@@ -24,10 +24,14 @@
      * Params       :  log => A function which is called by the entities of the
      *                         game whenever an action occurs
      */
-    var JSWarrior = function JSWarrior(log) {
+    var JSWarrior = function JSWarrior(log, onLevelComplete, onLevelFail) {
         var self = this,
             cells = [],
             interval;
+
+        var log = function(message) {
+            console.log(message);
+        };
 
         // Constants
         var MAX_TURNS = 100;
@@ -125,6 +129,7 @@
                     // Check warrior's health. If its 0 warrior died :( stop the code execution
                     if(self.warrior.health <= 0) {
                         clearInterval(interval);
+                        onLevelFail ();
                         log('jsWarrior died!');
                         log('jsWarrior failed this level!');
                         return;
@@ -138,6 +143,7 @@
                     if(turn === 100) {
                         clearInterval(interval);
                         log('jsWarrior failed this level!');
+                        onLevelFail ();
                         return;
                     }
 
@@ -145,6 +151,7 @@
                     if(self.warrior.getCurrentCell() === self.level.target) {
                         log('Hurray you completed this level!');
                         clearInterval(interval);
+                        onLevelComplete();
                         return;
                     }
 
@@ -154,6 +161,8 @@
                     log(exception.toString());
                     log('jsWarrior failed this level!');
                     clearInterval(interval);
+                    onLevelFail ();
+                    throw exception;
                 }
             }, 100);
         };

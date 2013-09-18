@@ -19,7 +19,6 @@
         textCM = CodeMirror.fromTextArea ($("#codeEditor")[0],{
             mode: {name: "javascript"}
         });
-        consoleCM = CodeMirror.fromTextArea ($("#consoleEditor")[0]);
 
         $(".emulationModeButtons a").click(function() {
             textCM.setOption('keyMap', $(this).attr('data-mode'));
@@ -35,7 +34,8 @@
     {
         var self = this,
             levelCompleteCallback = function(){},
-            code = "";
+            code = "",
+            game = null;
 
         self.onSuccess = function() {
             $.ajax({
@@ -50,18 +50,35 @@
             });
         };
 
-        self.activateNextButton = function (data) {
+        self.activateNextButton = function () {
             $("#nextLevelContainer").show();
             $("#nextLevelButton").click(function(){
                 self.onSuccess();
             });
         };
 
+        self.onLog = function(msg) {
+            console.log(msg);
+        };
+
+        self.onLevelComplete = function(){
+            $("#playButton").removeAttr("disabled");
+            self.activateNextButton();
+        };
+
+        self.onLevelFailed = function() {
+            $("#playButton").removeAttr("disabled");
+        };
+
         self.play = function () {
-            var code = $("#codeEditor").text();
+            var code = textCM.getValue();
+            $("#playButton").attr("disabled", "disabled");
 
             // Just pretend that the thing was successful
-            self.activateNextButton();
+//            self.activateNextButton();
+            game = new JSWarrior(console.log, self.onLevelComplete, self.onLevelFailed);
+            game.createLevel(window.currentLevel);
+            game.run(code);
         };
 
         self.stop = function() {
