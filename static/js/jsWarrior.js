@@ -187,6 +187,9 @@
             }
             log('turn ' + (turn + 1));
             var cells = copyCells(self.level.cells);
+            var health = $('<div/>').addClass('health');
+            health.text(20);
+            self.canvas.append(health);
             // Start running the code turn by turn each turn is executed every 100ms currently 
             interval = setInterval(function() {
                 
@@ -222,7 +225,7 @@
                         log('turn ' + (turn + 1));
                         runCell = 0;
                     }
-
+                    health.text(self.warrior.health);
                     // Loop through the level and find enemies and make them do their action for
                     // this turn
 

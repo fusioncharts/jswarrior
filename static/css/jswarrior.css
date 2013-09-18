@@ -100,3 +100,16 @@
     filter: FlipH;
     -ms-filter: "FlipH";
 }
+
+.health {
+    background: url('/static/images/heart.png');
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    padding-left: 26px;
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 0px;
+    top: 0px; 
+    color: #fff;
+}
