@@ -29,13 +29,9 @@
             cells = [],
             interval;
 
-        var log = function(message) {
-            console.log(message);
-        };
-
         // Constants
         var MAX_TURNS = 100;
-        var TURN_TIME = 100; 
+        var TURN_TIME = 1000;
 
         /**
          * Function     :   createLevel
@@ -165,6 +161,8 @@
                     throw exception;
                 }
             }, 100);
+
+            return interval;
         };
     };
 
