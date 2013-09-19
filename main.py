@@ -75,13 +75,22 @@ class CompleteHandler (webapp2.RequestHandler):
 
         sub.code = self.request.get('code', '')
         sub.put()
-
-        self.redirect ("/level/" + nextlevel)
+        
+        if levelid == "7":
+            self.redirect ("/win/")
+        else:
+            self.redirect ("/level/" + nextlevel)
 
 class WinHandler (webapp2.RequestHandler):
     def get(self):
         nocheating(self.response)
         template_values = get_default_template_values(True)
+        
+        sq = Submission.all()
+        sq.filter('user =', users.get_current_user())
+        if sq.count() < 7:
+            self.response.write("please finish previous levels first :)")
+            return
 
         template = JINJA_ENVIRONMENT.get_template('win.html')
         self.response.write(template.render(template_values))
