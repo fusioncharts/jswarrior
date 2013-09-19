@@ -61,6 +61,7 @@
             self.level = null;
             self.warrior = null;
 
+            self.canvas.empty();
             // Initialize the level with
             for(var i=0; i<numCells; i++) {
                 initCells[i] = new Empty();
@@ -74,7 +75,7 @@
                         'width': w,
                         'height': 100,
                         'left': i * w,
-                        'top': 300
+                        'top': 200
                     })
                 )
             }
@@ -672,6 +673,12 @@
             self.setMove();
             // If direction is forward move to the next cell if it is empty
             var dVar = self.moveVar * -1;
+            var ns = (direction === 'backward') ? self.currentCell - self.moveVar : self.currentCell + self.moveVar;
+
+            if(ns < 0 || ns >= self.level.numCells) {
+                log('jsWarrior hits the wall. Cannot walk to the next cell!');    
+                return;
+            }
             if(direction === 'forward' || direction == undefined) {
                 if(self.level.getCellContents(self.currentCell + self.moveVar).object.name === 'empty') {
                     self.level.setCellContents(self.currentCell, new Empty());
@@ -859,7 +866,7 @@
                     log('jsWarrior attempts to collect!');
 
                     // If the specified cell contains a captive warrior recues him hurray!
-                    if(obj.name === 'captive') {
+                    if(obj.name === 'diamond') {
                         log('jsWarrior collects ' + obj.type + ' !');
                         obj.free();
                     } else {

@@ -1,6 +1,6 @@
 #canvas {
-    height: 400px;
-    background: #242424;
+    height: 300px;
+    background: #98CAFF;
 }
 
 .warrior {
@@ -8,9 +8,10 @@
     background-size: 36px 60px;
     position: absolute;
     left: 20px;
-    top: 300px;
+    top: 190px;
     width: 36px;
     height: 60px;
+    margin: 0 40px; 
 }
 
 .warrior-attack {
@@ -31,11 +32,12 @@
 .captive {
     background: url('/static/images/captive.png');
     background-repeat: no-repeat;
-    background-size: 38px 48px;
+    background-size: 40px 40px;
     position: absolute;
-    top: 300px;
-    width: 38px;
-    height: 48px;
+    top: 200px;
+    width: 40px;
+    height: 40px;
+    margin: 20px 40px; 
 }
 
 .captive-free {
@@ -47,9 +49,10 @@
     background-size: 55px 25px;
     position: absolute;
     left: 20px;
-    top: 300px;
+    top: 200px;
     width: 55px;
     height: 25px;
+    margin: 20px 40px;
 }
 
 .thick-sludge {
@@ -57,9 +60,10 @@
     background-size: 66px 78px;
     position: absolute;
     left: 20px;
-    top: 280px;
+    top: 180px;
     width: 66px;
     height: 78px;
+    margin: 0 20px;
 }
 
 .troll-attack {
@@ -67,7 +71,7 @@
     background-size: 66px 78px;
     position: absolute;
     left: 20px;
-    top: 280px;
+    top: 180px;
     width: 66px;
     height: 78px;
 }
@@ -77,7 +81,7 @@
     background-size: 90px 75px;
     position: absolute;
     left: 20px;
-    top: 280px;
+    top: 180px;
     width: 90px;
     height: 75px;
 }
@@ -87,7 +91,7 @@
     background-size: 90px 75px;
     width: 90px;
     height: 75px;
-    top: 280px;
+    top: 180px;
 }
 
 .archer-shoot {
@@ -95,13 +99,13 @@
     background-size: 90px 75px;
     width: 90px;
     height: 75px;
-    top: 280px;
+    top: 180px;
 }
 
 .cell {
+    background: url('/static/images/cell.png');
     position: absolute;
-    background: #888;
-    border: 1px solid #aaa;
+    border: 1px solid #000;
 }
 
 .pivoted {
@@ -132,5 +136,10 @@
     background-size: 52px 6px;
     width: 52px;
     height: 6px;
-    top: 300px;
+    top: 200px;
+}
+
+#console {
+    height: 400px;
+    overflow: scroll;
 }

@@ -16,6 +16,7 @@
 
 
         window.game = new JSWarrior($('#canvas'));
+        game.createLevel(window.currentLevel);
     });
 
     // State Variables
@@ -66,6 +67,8 @@
 
         self.onLog = function(msg) {
             logDiv.append("<p>" + msg + "</p>");
+
+            $('#console').scrollTop(99999);
             console.log(msg);
         };
 
