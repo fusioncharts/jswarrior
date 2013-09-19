@@ -78,6 +78,14 @@ class CompleteHandler (webapp2.RequestHandler):
 
         self.response.write ("/level/" + nextlevel)
 
+class WinHandler (webapp2.RequestHandler):
+    def get(self):
+        nocheating(self.response)
+        template_values = get_default_template_values(True)
+
+        template = JINJA_ENVIRONMENT.get_template('win.html')
+        self.response.write(template.render(template_values))
+
 class LevelHandler (webapp2.RequestHandler):
     def get(self, levelId):
         nocheating(self.response)
@@ -109,4 +117,5 @@ app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/complete/(.*)', CompleteHandler),
     ('/level/(.*)', LevelHandler),
+    ('/win/', WinHandler),
 ], debug=True)
