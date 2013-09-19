@@ -173,8 +173,6 @@
         }
         self.currentMove = 'other';
 
-
-
         var global = (typeof window === 'undefined') ? global : window;
         global.jsWarrior = {};
 

@@ -139,7 +139,14 @@
     top: 100px;
 }
 
+
 #console {
     height: 400px;
     overflow: scroll;
+    font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+}
+
+#console p {
+    padding: 0;
+    margin: 0;
 }
