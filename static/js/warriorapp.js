@@ -62,14 +62,14 @@
 
         self.activateNextButton = function () {
             $("#nextLevelContainer").show();
-            $("#nextLevelButton").click(function(){
-                self.onSuccess();
-            });
+            // $("#nextLevelButton").click(function(){
+            //     self.onSuccess();
+            // });
         };
         
         self.hideNextButton = function() {
             $("#nextButtonContainer").hide();
-            $("#nextLevelButton").unbind();
+            // $("#nextLevelButton").unbind();
         }
 
         self.onLog = function(msg, color) {
@@ -106,9 +106,11 @@
 
         self.play = function () {
             self.hideNextButton();
+            self.onLevelComplete();
             logDiv = $("#logContainer");
             logDiv.empty();
             code = textCM.getValue();
+            $("#codeEditor").text(code);
             $("#playButton").attr("disabled", "disabled");
 
             game.setCallbacks(self.onLog, self.onLevelComplete, self.onLevelFailed);

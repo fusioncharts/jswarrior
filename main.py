@@ -76,7 +76,7 @@ class CompleteHandler (webapp2.RequestHandler):
         sub.code = self.request.get('code', '')
         sub.put()
 
-        self.response.write ("/level/" + nextlevel)
+        self.redirect ("/level/" + nextlevel)
 
 class WinHandler (webapp2.RequestHandler):
     def get(self):
@@ -92,6 +92,12 @@ class LevelHandler (webapp2.RequestHandler):
         validate_level (levelId)
         template_values = get_default_template_values(True)
         template_values['levelId'] = int(levelId)
+        
+        sq = Submission.all()
+        sq.filter('user =', users.get_current_user())
+        if sq.count() < int(levelId) - 1:
+            self.response.write("please finish previous levels first :)")
+            return
 
         sq = Submission.all()
         sq.filter('user =', users.get_current_user())
@@ -110,6 +116,7 @@ class LevelHandler (webapp2.RequestHandler):
                 template_values['code'] = sqres[0].code
 
         template_values['hintFile'] = "hints/hint%d.html" % int(levelId)
+        template_values['completeLevelLink'] = "/complete/" + levelId
         template = JINJA_ENVIRONMENT.get_template('level.html')
         self.response.write(template.render(template_values))
 
