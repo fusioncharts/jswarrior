@@ -66,6 +66,11 @@
                 self.onSuccess();
             });
         };
+        
+        self.hideNextButton = function() {
+            $("#nextButtonContainer").hide();
+            $("#nextLevelButton").unbind();
+        }
 
         self.onLog = function(msg, color) {
             var logItem = $("<p>").text(msg);
@@ -100,6 +105,7 @@
         };
 
         self.play = function () {
+            self.hideNextButton();
             logDiv = $("#logContainer");
             logDiv.empty();
             code = textCM.getValue();
@@ -112,11 +118,15 @@
         };
 
         self.stop = function() {
+            self.hideNextButton();
+            logDiv = $("#logContainer");
             $("#playButton").removeAttr("disabled");
             clearInterval(interval);
         };
         
         self.reset = function() {
+            self.hideNextButton();
+            logDiv = $("#logContainer");
             textCM.setValue($("#defaultTemplate").text());
         }
     }
