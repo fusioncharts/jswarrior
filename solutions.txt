@@ -134,7 +134,7 @@ jsWarrior.turn = function(warrior) {
   {
     warrior.pivot();
   }
-  if(warrior.check() == "enemy")
+  else if(warrior.check() == "enemy")
   {
     warrior.attack();
   }

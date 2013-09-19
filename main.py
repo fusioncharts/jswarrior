@@ -18,7 +18,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 class Submission (db.Model):
     level = db.IntegerProperty()
     user = db.UserProperty(required=True, auto_current_user=True)
-    code = db.StringProperty(multiline=True)
+    code = db.TextProperty()
     submission_time = db.DateTimeProperty(required=True,auto_now=True)
 
 def get_default_template_values (requireLogin):
