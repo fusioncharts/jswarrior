@@ -24,8 +24,9 @@
 
     var configureCodemirror = function() {
         textCM = CodeMirror.fromTextArea ($("#codeEditor")[0],{
-            mode: {name: "javascript"}
+            mode: {name: "javascript"},
         });
+        textCM.setSize(null, 400);
 
         $(".emulationModeButtons a").click(function() {
             textCM.setOption('keyMap', $(this).attr('data-mode'));
