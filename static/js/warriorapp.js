@@ -35,6 +35,7 @@
     var configureToolbar = function () {
         $("#playButton").click($.proxy(warriorController.play, warriorController));
         $("#stopButton").click($.proxy(warriorController.stop, warriorController));
+        $("#resetButton").click($.proxy(warriorController.reset, warriorController));
     };
 
     function WarriorController ()
@@ -65,8 +66,24 @@
             });
         };
 
-        self.onLog = function(msg) {
-            logDiv.append("<p>" + msg + "</p>");
+        self.onLog = function(msg, color) {
+            var logItem = $("<p>").text(msg);
+            
+            if(color) {
+                switch(color) {
+                    case "green":
+                        logItem.css('background-color', '#dff0d8');
+                        break;
+                    case "orange":
+                        logItem.css('background-color', '#fcf8e3');
+                        break;
+                    case "red":
+                        logItem.css('background-color', '#f2dede');
+                        break;
+                }
+            }
+            
+            logDiv.append(logItem);
 
             $('#console').scrollTop(99999);
             console.log(msg);
@@ -97,6 +114,10 @@
             $("#playButton").removeAttr("disabled");
             clearInterval(interval);
         };
+        
+        self.reset = function() {
+            textCM.setValue($("#defaultTemplate").text());
+        }
     }
 
     window.makeWarriorLevel = function(count, target, contents) {
