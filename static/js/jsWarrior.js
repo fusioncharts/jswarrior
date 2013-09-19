@@ -104,25 +104,40 @@
                 if(obj.name === 'enemy') {
                     var enemy = new Enemy(obj, log, self.context);
                     self.level.setCellContents(cellNum, enemy);
-                    var $obj;
+                    var $obj,
+                        $javelin;
+
                     if(obj.type === 'sludge') {
                         $obj = $('<div/>').addClass('sludge');
                     } else if(obj.type === 'thick sludge') {
                         $obj = $('<div/>').addClass('thick-sludge');
                     } else if(obj.type === 'archer') {
                         $obj = $('<div/>').addClass('archer');
+                        $javelin = $('<div/>').addClass('javelin');
+                        $javelin.css({
+                            left: cellNum * (self.canvas.innerWidth() / numCells),
+                            display: 'none'
+                        });
+                        self.canvas.append($javelin);
+                        enemy.javelin = $javelin;
                     }
 
-                    if(!enemy.pivoted) {
+                    if(enemy.pivoted) {
                         $obj.addClass('pivoted');
                     }
 
                     $obj.css({
                         left: cellNum * (self.canvas.innerWidth() / numCells)
-                    })
+                    });
+
+                    
+
                     self.canvas.append($obj);
+                    
 
                     enemy.renderObject = $obj;
+                    
+
                 } else if(obj.name === 'captive') {
                     var captive = new Captive(obj, log, self.context);
                     self.level.setCellContents(cellNum, captive);
@@ -305,7 +320,7 @@
     function Captive(options, log) {
         var self = this;
 
-        self.name = 'captive';
+        self.name = 'diamond';
         self.type = options.type;
         self.cell = options.cell;
         self.level = options.level;
@@ -320,7 +335,7 @@
             self.bound = false;
 
             // tell the user that the captive is free and clear the cell in the level
-            self.renderObject.addClass('captive-free');
+            
             self.renderObject.animate({
                 opacity: 0
             }, 300, function() {
@@ -330,7 +345,7 @@
                     self.renderObject.animate({
                         opacity: 0
                     }, 300, function() {
-                        log(options.type + ' is now free!');
+                        log(options.type + ' is now yours!');
                         self.level.setCellContents(self.cell, new Empty());
                     });
                 });
@@ -467,7 +482,9 @@
                 }
                 if(obj.name === 'warrior') {
                     if(!self.firstAttack) {
-
+                        if(self.type === 'thick sludge') {
+                            self.renderObject.addClass('troll-attack');
+                        }
                         self.renderObject.animate({
                             left: self.level.getScreenPosition(obj.currentCell).x
                         }, 50, function() {
@@ -475,6 +492,7 @@
                                 left: self.level.getScreenPosition(self.cell).x
                             }, 50, function() {
                                 obj.hit(self.attackDamage);
+                                self.renderObject.removeClass('troll-attack');
                                 log(self.type + ' hits jsWarrior and deals ' + self.attackDamage + ' damage!');
                             });
                         });
@@ -517,8 +535,21 @@
                             self.renderObject.addClass('archer-shoot');
                             setTimeout(function() {
                                 self.renderObject.removeClass('archer-shoot');
-                                warrior.hit(self.attackDamage);
-                                log(self.type + ' hits jsWarrior and deals ' + self.attackDamage + ' damage!');    
+                                self.javelin.css({
+                                    display: 'block'
+                                });
+                                
+                                self.javelin.animate({
+                                    left: self.level.getScreenPosition(warrior.currentCell).x
+                                }, 100, function() {
+                                    self.javelin.css({
+                                        display: 'none'
+                                    });
+                                    warrior.hit(self.attackDamage);
+                                    log(self.type + ' hits jsWarrior and deals ' + self.attackDamage + ' damage!');    
+                                });
+
+                                
                             }, 100);    
                         }, 100);
                         
@@ -720,7 +751,7 @@
             } else if(direction === 'backward') {
                 obj = self.level.getCellContents(self.currentCell - self.moveVar).object    
             }
-            
+            self.renderObject.addClass('warrior-attack');
             $(self.renderObject).animate({
                 left: self.level.getScreenPosition(self.currentCell - 1 + self.moveVar + 1).x
             }, 50, function() {
@@ -730,6 +761,7 @@
                     log('jsWarrior attempts to attack!');
                     // If the next cell is an enemy or a captive hit that bitch
                     if(obj.name === 'enemy' || obj.name === 'captive') {
+                        self.renderObject.removeClass('warrior-attack');
                         log('jsWarrior inflicted ' + self.attackDamage + ' damage to the ' + obj.type);
                         obj.hit(self.attackDamage);
                         
@@ -809,7 +841,7 @@
          * Description  :   Called when the warrior attemps to rescue something in the next cell
          * Params       :   direction => 'forward' || 'backward'
          */
-        self.rescue = function(direction) {
+        self.collect = function(direction) {
             self.setMove();
             var obj;
             if(direction === 'forward' || direction === undefined) {
@@ -824,15 +856,15 @@
                 $(self.renderObject).animate({
                     left: self.level.getScreenPosition(self.currentCell).x
                 }, 50, function() {
-                    log('jsWarrior attempts to rescue!');
+                    log('jsWarrior attempts to collect!');
 
                     // If the specified cell contains a captive warrior recues him hurray!
                     if(obj.name === 'captive') {
-                        log('jsWarrior rescues ' + obj.type + ' !');
+                        log('jsWarrior collects ' + obj.type + ' !');
                         obj.free();
                     } else {
                         // If the warrior attempts to rescue a cell without a captive he rescues nothing
-                        log('jsWarrior rescues nothing!');
+                        log('jsWarrior collects nothing!');
                     }
 
                 });

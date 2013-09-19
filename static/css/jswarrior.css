@@ -5,16 +5,26 @@
 
 .warrior {
     background: url('/static/images/warrior.png');
-    background-size: 68px 74px;
+    background-size: 36px 60px;
     position: absolute;
     left: 20px;
     top: 300px;
-    width: 68px;
-    height: 74px;
+    width: 36px;
+    height: 60px;
+}
+
+.warrior-attack {
+    background: url('/static/images/warrior_attack.png');
+    background-size: 51px 60px;
+    width: 51px;
+    height: 60px;
 }
 
 .warrior-rest {
-    background: url('/static/images/warrior_rest_1.png');
+    background: url('/static/images/warrior_rest.png');
+    background-size: 50px 60px;
+    width: 50px;
+    height: 60px;
     background-repeat: no-repeat; 
 }
 
@@ -33,57 +43,59 @@
 }
 
 .sludge {
-    background: url('/static/images/sludge_normal.png');
-    background-size: 38px 54px;
-    background-position: 38px 54px;
+    background: url('/static/images/crab.png');
+    background-size: 55px 25px;
     position: absolute;
     left: 20px;
     top: 300px;
-    width: 38px;
-    height: 54px;
+    width: 55px;
+    height: 25px;
 }
 
 .thick-sludge {
-    background: url('/static/images/thick_sludge_normal.png');
-    background-size: 83px 84px;
+    background: url('/static/images/troll.png');
+    background-size: 66px 78px;
     position: absolute;
     left: 20px;
-    top: 300px;
-    width: 83px;
-    height: 84px;
+    top: 280px;
+    width: 66px;
+    height: 78px;
+}
+
+.troll-attack {
+    background: url('/static/images/troll_attack.png');
+    background-size: 66px 78px;
+    position: absolute;
+    left: 20px;
+    top: 280px;
+    width: 66px;
+    height: 78px;
 }
 
 .archer {
     background: url('/static/images/archer_normal.png');
-    background-size: 94px 99px;
+    background-size: 90px 75px;
     position: absolute;
     left: 20px;
-    top: 300px;
-    width: 94px;
-    height: 99px;
+    top: 280px;
+    width: 90px;
+    height: 75px;
 }
 
 .archer-with-arrow {
     background: url('/static/images/archer_with_arrow.png');
-    background-size: 94px 116px;
-    width: 94px;
-    height: 116px;
+    background-size: 90px 75px;
+    width: 90px;
+    height: 75px;
     top: 280px;
 }
 
 .archer-shoot {
     background: url('/static/images/archer_shoot.png');
-    background-size: 94px 116px;
-    width: 94px;
-    height: 116px;
+    background-size: 90px 75px;
+    width: 90px;
+    height: 75px;
     top: 280px;
-}
-
-.archer-hit {
-    background: url('/static/images/archer_hit.png');
-    background-size: 94px 116px;
-    width: 94px;
-    height: 116px;
 }
 
 .cell {
@@ -112,4 +124,13 @@
     left: 0px;
     top: 0px; 
     color: #fff;
+}
+
+.javelin {
+    position: absolute;
+    background: url('/static/images/javelin.png');
+    background-size: 52px 6px;
+    width: 52px;
+    height: 6px;
+    top: 300px;
 }
