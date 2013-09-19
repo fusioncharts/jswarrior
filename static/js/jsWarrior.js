@@ -238,7 +238,7 @@
 
                 try {
                     
-                    setTimeout(function() {
+                    // setTimeout(function() {
                         if(runWarrior) {
                             
                             turn ++;
@@ -248,13 +248,15 @@
                                 jsWarrior.turn(self.warrior);
                             }
                         } else {
+
                             if(_enemy && _enemy.health > 0 && _warrior.getHealth() > 0) {
+                                
                                 _enemy.playTurn();
                             }    
                         }
                         runWarrior = !runWarrior;
                         
-                    }, 300);
+                    // }, 500);
                     
                     health.text(self.warrior.getHealth());   
                     if(self.warrior.getHealth() <= 0) {
@@ -395,7 +397,7 @@
                     onLevelFail ();
                     throw exception;
                 }
-            }, 500);
+            }, 600);
 
             return interval;
         };
@@ -578,10 +580,12 @@
                         return true;
                         
                     } else {
+                        console.log('can\'t attack first Attack');
                         self.firstAttack = false;
                         return false;
                     }
                 } else {
+                    console.log('can\'t attack no warrior');
                     return false;
                 }
             } else if(self.attackType === 'ranged') {
@@ -614,10 +618,12 @@
 
                         return true;
                     }
+                    console.log('can\'t attack first attack');
                     self.firstAttack = false;
                     return false;
                 } else {
                     self.firstAttack = true;
+
                     return false;
                 }
                 return false;
@@ -665,7 +671,7 @@
                 var canAttack = true;
                 var warrior = null;
                 var cells = [];
-
+                
                 for(var i=0; i<self.range; i++) {
 
                     if(self.pivoted) {
@@ -680,6 +686,7 @@
                     if(cells[i].name === 'warrior') {
 
                         warrior =  cells[i];
+
                     }
                 }
 
@@ -716,6 +723,7 @@
                     self.firstAttack = false;
                 } else {
                     self.firstAttack = true;
+                    console.log(canAttack, warrior);
                 }
 
             }       
