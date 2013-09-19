@@ -106,7 +106,6 @@
 
         self.play = function () {
             self.hideNextButton();
-            self.onLevelComplete();
             logDiv = $("#logContainer");
             logDiv.empty();
             code = textCM.getValue();
