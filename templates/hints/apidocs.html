@@ -1,0 +1,98 @@
+<h4>Turns</h4>
+<p>The game is played in turns. At every turn, the <code>jsWarrior.turn</code> is executed to determine what action the warrior will take. It's your responsibility to define the behavior using this function.</p>
+<h4>Actions</h4>
+<p>An action is something that the warrior can do. You can perform one action per turn</p>
+<table class="table">
+	<thead>
+		<tr><th>Function</th><th>Description</th></tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><p><code>warrior.walk()</code>
+			</p></td>
+			<td><p>Walks in the direction the warrior is currently facing. Use <code>warrior.walk('backward')</code> to walk backward.
+			</p></td>
+		</tr>
+		<tr>
+			<td><p><code>warrior.attack()</code>
+			</p></td>
+			<td><p>Attack one step in the direction that you're facing. An attack deals 5 points of damage.</p></td>
+		</tr>
+		<tr>
+			<td><p><code>warrior.rest()</code>
+			</p></td>
+			<td><p>Rest for the turn and gain 2 points of health.</p></td>
+		</tr>
+		<tr>
+			<td><p><code>warrior.pivot()</code>
+			</p></td>
+			<td><p>Turn around and face the other direction.</p></td>
+		</tr>
+		<tr>
+			<td><p><code>warrior.collect()</code>
+			</p></td>
+			<td><p>Collect a gem if it's there one step in the direction that you're facing.</p></td>
+		</tr>
+	</tbody>
+</table>
+<h4>Checking your surroundings</h4>
+<p>You can check to see what lies in your immediate surroundings. Simply call <code>warrior.check()</code> to see what's in the next step, in the direction you're facing, and <code>warrior.check('backward')</code> to see what's behind you. The function returns a string, and the possible values are:</p>
+
+<table class="table">
+	<thead>
+		<tr><th>String</th><th>Description</th></tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><p><code>empty</code>
+			</p></td>
+			<td><p>Nothing in the next cell
+			</p></td>
+		</tr>
+		<tr>
+			<td><p><code>enemy</code>
+			</p></td>
+			<td><p>An enemy in the next cell</p></td>
+		</tr>
+		<tr>
+			<td><p><code>gem</code>
+			</p></td>
+			<td><p>A gem that you can collect.</p></td>
+		</tr>
+		<tr>
+			<td><p><code>wall</code>
+			</p></td>
+			<td><p>A wall of the room</p></td>
+		</tr>
+	</tbody>
+</table>
+
+<h4>Enemies</h4>
+<table class="table">
+	<thead>
+		<tr><th>Name</th><th>Description</th></tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><p>Crab
+			</p></td>
+			<td><p>A small animal with a meelee attack.
+			</p></td>
+		</tr>
+		<tr>
+			<td><p>Troll
+			</p></td>
+			<td><p>A much stronger enemy with a more powerful meelee attack</p></td>
+		</tr>
+		<tr>
+			<td><p>JavaLiner
+			</p></td>
+			<td><p>A frustrated developer who hates jsWarrior. Throws JavaLins at you from a distance. Has a limited range.</p></td>
+		</tr>
+		<tr>
+			<td><p><code>wall</code>
+			</p></td>
+			<td><p>A wall of the room</p></td>
+		</tr>
+	</tbody>
+</table>
