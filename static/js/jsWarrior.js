@@ -226,10 +226,25 @@
                         
                         runCell++;
                         
-                    } else if(currentObject.name === 'enemy' || currentObject.name === 'captive') {
+                    } else if(currentObject.name === 'enemy') {
                         if(currentObject.health > 0) {
-                            currentObject.playTurn();    
+                            currentObject.playTurn();
+                            for(var i=runCell; i<cells.length; i++) {
+
+                                if(cells[i].object.name === 'enemy' || cells[i].object.name === 'diamond') {
+
+                                  if(!cells[i].object.canPlay()) {
+                                    runCell++;
+                                  } else {
+                                    break;
+                                  }
+                                    
+                                } else {
+                                    break; 
+                                }
+                            }   
                         }
+                        
                         
                         runCell++;
                     } else {
@@ -466,6 +481,66 @@
             })
                             
         }
+
+        self.canPlay = function() {
+            if(self.attackType === 'melee') {
+                var obj; 
+                if(self.pivoted) {
+                    obj = self.level.getCellContents(self.cell + 1).object;
+                    
+                } else {
+                    obj = self.level.getCellContents(self.cell - 1).object;
+                }
+                if(obj.name === 'warrior') {
+                    if(!self.firstAttack) {
+                        return true;
+                        
+                    } else {
+                        self.firstAttack = false;
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else if(self.attackType === 'ranged') {
+                // If the enemy unit is ranged check the cells in the range and see if there is a clear shot
+                // to the warrior if so take it
+                var canAttack = true;
+                var warrior = null;
+                var cells = [];
+
+                for(var i=0; i<self.range; i++) {
+
+                    if(self.pivoted) {
+                        cells[i] = self.level.getCellContents(self.cell + (i+1)).object;
+                    } else {
+                        cells[i] = self.level.getCellContents(self.cell - (i+1)).object;    
+                    }
+                    if(cells[i].name !== 'empty' && cells[i].name !== 'warrior') {
+                        canAttack = false;
+                    }
+
+                    if(cells[i].name === 'warrior') {
+
+                        warrior =  cells[i];
+                    }
+                }
+
+                if(canAttack && warrior) {
+
+                    if(!self.firstAttack) {
+
+                        return true;
+                    }
+                    self.firstAttack = false;
+                    return false;
+                } else {
+                    self.firstAttack = true;
+                    return false;
+                }
+                return false;
+            }
+        };
 
         /**
          * Function     :   playTurn
