@@ -77,12 +77,17 @@
                         'left': i * w,
                         'top': 100
                     })
-                )
+                );
             }
 
             // Create a new level
             self.level = new Level(numCells, target, initCells, self.canvas.innerWidth(), self.canvas.innerHeight());
 
+            self.canvas.append(
+                $('<div/>').addClass('target').css({
+                    left: self.level.getScreenPosition(target)
+                })
+            );
             // Loop through the level object and create the necessary objects and put
             // them into the cells in the level
             for(var i=0; i<cells.length; i++) {

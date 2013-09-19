@@ -157,3 +157,32 @@
     height: 400px;
     overflow: scroll;
 }
+
+.target {
+    position: absolute;
+    background: url('/static/images/target_board.png');
+    background-size: 96px 48px;
+    width: 96px;
+    height: 48px;
+    top: 20px;
+    -webkit-animation: float 2s linear infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        top: 20px;
+    }
+    50% {
+        top: 60px;   
+    }
+}
+
+@-webkit-keyframes float {
+    0%, 100% {
+        top: 20px;
+    }
+    50% {
+        top: 60px;   
+    }
+}
+
