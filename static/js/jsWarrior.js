@@ -199,7 +199,7 @@
                 }
                 return arr;
             }
-            log('turn ' + (turn + 1));
+            console.log('turn ' + (turn + 1));
             var cells = copyCells(self.level.cells);
             var health = $('<div/>').addClass('health');
             health.text(20);
@@ -251,7 +251,7 @@
 
                     if(runCell === level.numCells) {
                         turn++;
-                        log('turn ' + (turn + 1));
+                        console.log('turn ' + (turn + 1));
                         runCell = 0;
                     }
                     health.text(self.warrior.health);
@@ -274,8 +274,8 @@
                         clearInterval(interval);
                         onLevelFail ();
                         self.warrior.die();
-                        log('jsWarrior died!');
-                        log('jsWarrior failed this level!');
+                        log('jsWarrior died!', 'red');
+                        log('jsWarrior failed this level!', 'red');
                         return;
                     }
                     // // Run the turn code provided by the user
@@ -291,14 +291,14 @@
                     // // Only 100 turns can be played if it exceeds js warrior failed
                     if(turn === 100) {
                         clearInterval(interval);
-                        log('jsWarrior failed this level!');
+                        log('jsWarrior failed this level!', 'red');
                         onLevelFail ();
                         return;
                     }
 
                     // // If jsWarrior is at the target cell he won :)
                     if(self.warrior.getCurrentCell() === self.level.target) {
-                        log('Hurray you completed this level!');
+                        log('Hurray you completed this level!', 'green');
                         clearInterval(interval);
                         onLevelComplete();
                         return;
@@ -308,7 +308,7 @@
                     // If any exception occurs this will catch it and tell the user that js warrior failed because
                     // of an exception in the user's code
                     log(exception.toString());
-                    log('jsWarrior failed this level!');
+                    log('jsWarrior failed this level!', 'red');
                     clearInterval(interval);
                     onLevelFail ();
                     throw exception;
@@ -359,7 +359,7 @@
                     self.renderObject.animate({
                         opacity: 0
                     }, 300, function() {
-                        log(options.type + ' is now yours!');
+                        log(options.type + ' is now yours!', 'green');
                         self.level.setCellContents(self.cell, new Empty());
                     });
                 });
@@ -382,7 +382,7 @@
                     self.renderObject.animate({
                         opacity: 0
                     }, 300, function() {
-                        log(options.type + ' died!');
+                        log(options.type + ' died!', 'red');
                         self.level.setCellContents(self.cell, new Empty());
                     });
                 });
@@ -468,7 +468,7 @@
                         }, 50, function() {
                             self.renderObject.removeClass('archer-hit')
                             if(self.health <= 0) {
-                                log(self.type + ' died!');
+                                log(self.type + ' died!', 'green');
                                 self.level.setCellContents(self.cell, new Empty());
                                 
                                 self.die();
@@ -567,7 +567,7 @@
                             }, 50, function() {
                                 obj.hit(self.attackDamage);
                                 self.renderObject.removeClass('troll-attack');
-                                log(self.type + ' hits jsWarrior and deals ' + self.attackDamage + ' damage!');
+                                log(self.type + ' hits jsWarrior and deals ' + self.attackDamage + ' damage!', 'orange');
                             });
                         });
                         
@@ -620,7 +620,7 @@
                                         display: 'none'
                                     });
                                     warrior.hit(self.attackDamage);
-                                    log(self.type + ' hits jsWarrior and deals ' + self.attackDamage + ' damage!');    
+                                    log(self.type + ' hits jsWarrior and deals ' + self.attackDamage + ' damage!', 'orange');    
                                 });
 
                                 
@@ -761,7 +761,7 @@
                     $(self.renderObject).animate({
                         left: self.level.getScreenPosition(self.currentCell + dVar + self.moveVar).x
                     }, 50, function() {
-                        log('Walking to next cell! currentCell is ' + self.currentCell);    
+                        log('jsWarrior walks ahead');    
                     });
                     
                     return true
@@ -776,7 +776,7 @@
                     $(self.renderObject).animate({
                         left: self.level.getScreenPosition(self.currentCell + dVar + self.moveVar).x
                     }, 50, function() {
-                        log('Walking to next cell! currentCell is ' + self.currentCell);    
+                        log('jsWarrior walks ahead');    
                     });
                     
                     
@@ -790,7 +790,7 @@
                 $(self.renderObject).animate({
                     left: self.level.getScreenPosition(self.currentCell).x
                 }, 50, function() {
-                    log('Cannot walk to next cell!');        
+                    log('Cannot walk to next cell!', 'red');        
                 });
             });
             // Oh oh something is blocking the warrior's path
@@ -842,7 +842,7 @@
                     // If the next cell is an enemy or a captive hit that bitch
                     if(obj.name === 'enemy' || obj.name === 'captive') {
                         self.renderObject.removeClass('warrior-attack');
-                        log('jsWarrior inflicted ' + self.attackDamage + ' damage to the ' + obj.type);
+                        log('jsWarrior inflicted ' + self.attackDamage + ' damage to the ' + obj.type, 'green');
                         obj.hit(self.attackDamage);
                         
                     } else {
@@ -890,7 +890,7 @@
             self.setMove();
             self.renderObject.addClass('warrior-rest');
             setTimeout(function() {
-                log('jsWarrior rested and got 2 health!');
+                log('jsWarrior rested and got 2 health!', 'green');
                 self.health += 2;
                 self.renderObject.removeClass('warrior-rest');
                 if(self.health > 20) {
@@ -940,11 +940,11 @@
 
                     // If the specified cell contains a captive warrior recues him hurray!
                     if(obj.name === 'diamond') {
-                        log('jsWarrior collects ' + obj.type + ' !');
+                        log('jsWarrior collects ' + obj.type + ' !', 'green');
                         obj.free();
                     } else {
                         // If the warrior attempts to rescue a cell without a captive he rescues nothing
-                        log('jsWarrior collects nothing!');
+                        log('jsWarrior collects nothing!', 'orange');
                     }
 
                 });
@@ -980,44 +980,44 @@
             return array;
         }
 
-        /**
-         * Function     :   shoot
-         * Description  :   Warrior shoots an arrow when called. The arrow has a range of three cells
-         * Params       :   direction => 'forward' || 'backward'
-         */
-        self.shoot = function(direction) {
-            self.setMove();
-            var array = [];
-            var numCells = self.level.numCells;
-            var dir;
-            log('jsWarrior shoots an arrow')
+        // /**
+        //  * Function     :   shoot
+        //  * Description  :   Warrior shoots an arrow when called. The arrow has a range of three cells
+        //  * Params       :   direction => 'forward' || 'backward'
+        //  */
+        // self.shoot = function(direction) {
+        //     self.setMove();
+        //     var array = [];
+        //     var numCells = self.level.numCells;
+        //     var dir;
+        //     log('jsWarrior shoots an arrow')
 
-            if(direction === 'forward' || direction === undefined) {
-                dir = 1;
-            } else if(direction === 'backward') {
-                dir = -1;
-            }
-            // Loop and check the next three cells in the given direction for something
-            for(var i=0; i<3; i++) {
-                var tCell = self.currentCell + ((i+1)*self.moveVar) * dir;
-                if(tCell >= numCells || tCell < 0) {
-                    log('arrow hits the wall!');
-                    return;
-                }
+        //     if(direction === 'forward' || direction === undefined) {
+        //         dir = 1;
+        //     } else if(direction === 'backward') {
+        //         dir = -1;
+        //     }
+        //     // Loop and check the next three cells in the given direction for something
+        //     for(var i=0; i<3; i++) {
+        //         var tCell = self.currentCell + ((i+1)*self.moveVar) * dir;
+        //         if(tCell >= numCells || tCell < 0) {
+        //             log('arrow hits the wall!');
+        //             return;
+        //         }
 
-                var obj = self.level.getCellContents(tCell).object;
+        //         var obj = self.level.getCellContents(tCell).object;
 
-                // When a cell in range has an enemy or captive hit it
-                if(obj.name === 'enemy' || obj.name === 'captive') {
-                    log('jsWarrior inflicted 3 damage to the ' + obj.type);
-                    obj.hit(3);
-                    return;
-                }
-            }
+        //         // When a cell in range has an enemy or captive hit it
+        //         if(obj.name === 'enemy' || obj.name === 'captive') {
+        //             log('jsWarrior inflicted 3 damage to the ' + obj.type);
+        //             obj.hit(3);
+        //             return;
+        //         }
+        //     }
 
-            // If nothing found in the arrow's path it hits nothing
-            log('arrow hits nothing!!');
-        }
+        //     // If nothing found in the arrow's path it hits nothing
+        //     log('arrow hits nothing!!');
+        // }
 
         /**
          * Function     :   pivot
