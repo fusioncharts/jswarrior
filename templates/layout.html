@@ -19,7 +19,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-8">
-                <h2>JSWarrior</h2> <span class="by-fc">by FusionCharts</span>
+                <h2>JSWarrior <small>by FusionCharts</small></h2> 
             </div>
             <div class="col-xs-4 text-right" style="margin-top:25px">
                 {% if loggedIn %}
@@ -30,5 +30,12 @@
             </div>
         </div>
         {% block content %}{% endblock %}
+        <div class="row">
+            <div class="col-xs-6 pull-right text-right" style='margin-top: 15px'>
+                <img src="https://developers.google.com/appengine/images/appengine-silver-120x30.gif" 
+alt="Powered by Google App Engine" />
+                <a href="http://fusioncharts.com/careers/"><img src="http://www.fusioncharts.com/company/press-kit/images/fc_logo_300x60.gif" style="height: 30px; width: 150px"></img></a>
+            </div>
+        </div>
     </div>
 </body>
