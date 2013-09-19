@@ -108,12 +108,12 @@
                     var $obj,
                         $javelin;
 
-                    if(obj.type === 'sludge') {
-                        $obj = $('<div/>').addClass('sludge');
-                    } else if(obj.type === 'thick sludge') {
-                        $obj = $('<div/>').addClass('thick-sludge');
-                    } else if(obj.type === 'archer') {
-                        $obj = $('<div/>').addClass('archer');
+                    if(obj.type === 'crab') {
+                        $obj = $('<div/>').addClass('crab');
+                    } else if(obj.type === 'troll') {
+                        $obj = $('<div/>').addClass('troll');
+                    } else if(obj.type === 'javaliner') {
+                        $obj = $('<div/>').addClass('javaliner');
                         $javelin = $('<div/>').addClass('javelin');
                         $javelin.css({
                             left: cellNum * (self.canvas.innerWidth() / numCells),
@@ -139,10 +139,10 @@
                     enemy.renderObject = $obj;
                     
 
-                } else if(obj.name === 'captive') {
+                } else if(obj.name === 'diamond') {
                     var captive = new Captive(obj, log, self.context);
                     self.level.setCellContents(cellNum, captive);
-                    var $obj = $('<div/>').addClass('captive');
+                    var $obj = $('<div/>').addClass('diamond');
 
                     self.canvas.append($obj);
 
@@ -199,78 +199,54 @@
                 }
                 return arr;
             }
-            console.log('turn ' + (turn + 1));
+
             var cells = copyCells(self.level.cells);
             var health = $('<div/>').addClass('health');
             health.text(20);
             self.canvas.append(health);
+            var runWarrior = true;
             // Start running the code turn by turn each turn is executed every 100ms currently 
             interval = setInterval(function() {
                 
                 var level = self.level;
+                var _warrior;
+                var _enemy;
+
+                for(var i=0; i<cells.length; i++) {
+                    var currentObject = cells[i].object;
+                    if(currentObject.name === 'warrior') {
+                        _warrior = currentObject;
+                    } else if(currentObject.name === 'enemy') {
+                        if(currentObject.canPlay()) {
+                            _enemy = currentObject;
+                        }
+                    }
+                }
+                
 
 
                 try {
                     
-                    
-
-                    var currentObject = cells[runCell].object;
-
-                    if(currentObject.name === 'warrior') {
-                        if(currentObject.health > 0) {
-                            self.warrior.clearMove();
-                            jsWarrior.turn(self.warrior);
-                        }
-                        
-                        runCell++;
-                        
-                    } else if(currentObject.name === 'enemy') {
-                        if(currentObject.health > 0) {
-                            currentObject.playTurn();
-                            for(var i=runCell; i<cells.length; i++) {
-
-                                if(cells[i].object.name === 'enemy' || cells[i].object.name === 'diamond') {
-
-                                  if(!cells[i].object.canPlay()) {
-                                    runCell++;
-                                  } else {
-                                    break;
-                                  }
-                                    
-                                } else {
-                                    break; 
-                                }
-                            }   
-                        }
-                        
-                        
-                        runCell++;
-                    } else {
-                        runCell++;
-                    }
-
-                    if(runCell === level.numCells) {
-                        turn++;
-                        console.log('turn ' + (turn + 1));
-                        runCell = 0;
-                    }
-                    health.text(self.warrior.health);
-                    // Loop through the level and find enemies and make them do their action for
-                    // this turn
-
-                    // if(self.currentMove === 'other') {
-                    //     for(var i=0;i<level.cells.length; i++) {
-                    //         var cell = level.cells[i];
+                    setTimeout(function() {
+                        if(runWarrior) {
                             
-                    //         if(cell.object.name === 'enemy') {
-                    //             cell.object.playTurn();
-                    //         }
-                    //     }
-                    // }
-
-
-                    // // Check warrior's health. If its 0 warrior died :( stop the code execution
-                    if(self.warrior.health <= 0) {
+                            turn ++;
+                            log('Turn ' + turn);
+                            if(_warrior.getHealth() > 0) {
+                                self.warrior.clearMove();
+                                jsWarrior.turn(self.warrior);
+                            }
+                        } else {
+                            if(_enemy && _enemy.health > 0 && _warrior.getHealth() > 0) {
+                                _enemy.playTurn();
+                            }    
+                        }
+                        runWarrior = !runWarrior;
+                        
+                    }, 300);
+                    
+                    health.text(self.warrior.getHealth());   
+                    if(self.warrior.getHealth() <= 0) {
                         clearInterval(interval);
                         onLevelFail ();
                         self.warrior.die();
@@ -278,23 +254,15 @@
                         log('jsWarrior failed this level!', 'red');
                         return;
                     }
-                    // // Run the turn code provided by the user
-                    // if(self.currentMove === 'warrior') {
-                    //     jsWarrior.turn(self.warrior);
-                    //     warrior.draw(context, function() {
-                    //         self.currentMove = 'rest';
-                    //     })
-                    // }
-                        
-                    // turn++;
 
-                    // // Only 100 turns can be played if it exceeds js warrior failed
+                    
                     if(turn === 100) {
                         clearInterval(interval);
                         log('jsWarrior failed this level!', 'red');
                         onLevelFail ();
                         return;
                     }
+
 
                     // // If jsWarrior is at the target cell he won :)
                     if(self.warrior.getCurrentCell() === self.level.target) {
@@ -303,8 +271,111 @@
                         onLevelComplete();
                         return;
                     }
+                }
+                // try {
+                    
+                //     var currentObject = cells[runCell].object;
+                //     if(currentObject.name === 'warrior') {
+                //         if(currentObject.getHealth() > 0) {
+                //             self.warrior.clearMove();
+                //             jsWarrior.turn(self.warrior);
+                //         }
+                        
+                //         runCell++;
+                        
+                //     } else {
+                //         var isWarrior = false;
+                //         for(var i=runCell; i<cells.length; i++) {
 
-                } catch(exception) {
+                //             if(cells[i].object.name === 'enemy') {
+
+                //                 if(cells[i].object.health > 0 && cells[i].object.canPlay()) {
+                //                     cells[i].object.playTurn();
+                //                     runCell = level.numCells; 
+                //                     break;
+                //                 }
+                //                 //     for(var i=runCell; i<cells.length; i++) {
+
+                //                 //         if(cells[i].object.name === 'enemy' || cells[i].object.name === 'diamond') {
+
+                //                 //           if(!cells[i].object.canPlay()) {
+                //                 //             runCell++;
+                //                 //           } else {
+                //                 //             break;
+                //                 //           }
+                                            
+                //                 //         } else {
+                //                 //             break; 
+                //                 //         }
+                //                 //     }   
+                //                 // }
+                                
+                //                 // runCell++;         
+                //             } else if(cells[i].object.name === 'warrior') {
+                //                 isWarrior = true;
+                //                 runCell ++;
+                //                 break;   
+                //             }
+                //         }
+                //         if(!isWarrior) {
+                //             runCell = level.numCells;    
+                //         }
+                        
+                //      }
+
+
+                //     if(runCell === level.numCells) {
+                //         turn++;
+                //         log('turn ' + (turn + 1));
+                //         runCell = 0;
+                //     }
+                    
+                //     // Loop through the level and find enemies and make them do their action for
+                //     // this turn
+
+                //     // if(self.currentMove === 'other') {
+                //     //     for(var i=0;i<level.cells.length; i++) {
+                //     //         var cell = level.cells[i];
+                            
+                //     //         if(cell.object.name === 'enemy') {
+                //     //             cell.object.playTurn();
+                //     //         }
+                //     //     }
+                //     // }
+
+
+                //     // // Check warrior's health. If its 0 warrior died :( stop the code execution
+                //     if(self.warrior.getHealth() <= 0) {
+                //         clearInterval(interval);
+                //         onLevelFail ();
+                //         self.warrior.die();
+                //         log('jsWarrior died!');
+                //         log('jsWarrior failed this level!');
+                //         return;
+                //     }
+                //     // // Run the turn code provided by the user
+                //     // if(self.currentMove === 'warrior') {
+                //     //     jsWarrior.turn(self.warrior);
+                //     //     warrior.draw(context, function() {
+                //     //         self.currentMove = 'rest';
+                //     //     })
+                //     // }
+                        
+                //     // turn++;
+
+                //     // // Only 100 turns can be played if it exceeds js warrior failed
+                //     if(turn === 100) {
+                //         clearInterval(interval);
+                //         log('jsWarrior failed this level!');
+                //         onLevelFail ();
+                //         return;
+                //     }
+
+                //     // // If jsWarrior is at the target cell he won :)
+                
+
+                // } 
+                catch(exception) {
                     // If any exception occurs this will catch it and tell the user that js warrior failed because
                     // of an exception in the user's code
                     log(exception.toString());
@@ -313,7 +384,7 @@
                     onLevelFail ();
                     throw exception;
                 }
-            }, 250);
+            }, 500);
 
             return interval;
         };
@@ -349,7 +420,7 @@
             self.bound = false;
 
             // tell the user that the captive is free and clear the cell in the level
-            
+            self.level.setCellContents(self.cell, new Empty());
             self.renderObject.animate({
                 opacity: 0
             }, 300, function() {
@@ -359,8 +430,12 @@
                     self.renderObject.animate({
                         opacity: 0
                     }, 300, function() {
+
                         log(options.type + ' is now yours!', 'green');
                         self.level.setCellContents(self.cell, new Empty());
+
+                        log(options.type + ' is now yours!');
+                        
                     });
                 });
             });
@@ -450,9 +525,7 @@
          */
         self.hit = function(damage) {
             self.health -= damage;
-            if(self.type === 'archer') {
-                self.renderObject.addClass('archer-hit')
-            }
+
             // If health is <= 0 the enemy died. Tell the user and clear the cell in the level
             self.renderObject.animate({
                 left: self.level.getScreenPosition(self.cell).x + 10
@@ -556,7 +629,7 @@
                 }
                 if(obj.name === 'warrior') {
                     if(!self.firstAttack) {
-                        if(self.type === 'thick sludge') {
+                        if(self.type === 'troll') {
                             self.renderObject.addClass('troll-attack');
                         }
                         self.renderObject.animate({
@@ -603,18 +676,19 @@
 
                     if(!self.firstAttack) {
 
-                        self.renderObject.addClass('archer-with-arrow');
+                        self.renderObject.addClass('javaliner-with-javelin');
                         setTimeout(function() {
-                            self.renderObject.removeClass('archer-with-arrow');
-                            self.renderObject.addClass('archer-shoot');
+                            self.renderObject.removeClass('javaliner-with-javelin');
+                            self.renderObject.addClass('javaliner-shoot');
                             setTimeout(function() {
-                                self.renderObject.removeClass('archer-shoot');
+                                self.renderObject.removeClass('javaliner-shoot');
                                 self.javelin.css({
-                                    display: 'block'
+                                    display: 'block',
+                                    left: self.level.getScreenPosition(self.cell).x
                                 });
                                 
                                 self.javelin.animate({
-                                    left: self.level.getScreenPosition(warrior.currentCell).x
+                                    left: self.level.getScreenPosition(warrior.currentCell).x + 40
                                 }, 100, function() {
                                     self.javelin.css({
                                         display: 'none'
@@ -716,8 +790,8 @@
 
         self.level = options.level;
         self.currentCell = options.cell;
-        self.health = options.health;
-        self.attackDamage = options.attackDamage;
+        var health = options.health;
+        var attackDamage = options.attackDamage;
         self.name = 'warrior';
         self.moveVar = 1;
         self.level.setCellContents(self.currentCell, self);
@@ -736,6 +810,10 @@
                 throw "jsWarrior cannot perform 2 moves in a turn!";
             }
             
+        };
+
+        self.getHealth = function() {
+            return health;
         };
 
         self.clearMove = function() {
@@ -840,7 +918,7 @@
                 }, 50, function() {
                     log('jsWarrior attempts to attack!');
                     // If the next cell is an enemy or a captive hit that bitch
-                    if(obj.name === 'enemy' || obj.name === 'captive') {
+                    if(obj.name === 'enemy' || obj.name === 'diamond') {
                         self.renderObject.removeClass('warrior-attack');
                         log('jsWarrior inflicted ' + self.attackDamage + ' damage to the ' + obj.type, 'green');
                         obj.hit(self.attackDamage);
@@ -861,7 +939,7 @@
          *                  becomes <= 0 then he dies, unlike chuck norris :P
          */
         self.hit = function(damage) {
-            self.health -= damage;
+            health -= damage;
         
             self.renderObject.animate({
                 left: self.level.getScreenPosition(self.currentCell).x + 10
@@ -890,11 +968,12 @@
             self.setMove();
             self.renderObject.addClass('warrior-rest');
             setTimeout(function() {
+
                 log('jsWarrior rested and got 2 health!', 'green');
                 self.health += 2;
                 self.renderObject.removeClass('warrior-rest');
-                if(self.health > 20) {
-                    self.health = 20;
+                if(health > 20) {
+                    health = 20;
                 }
             }, 200);
                 

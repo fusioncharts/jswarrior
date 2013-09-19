@@ -136,44 +136,44 @@
                         attackDamage: 5
                     });
                     break;
-                case "sludge":
+                case "crab":
                     cells.push({
                         name: 'enemy',
                         "attackType": "melee",
-                        type: "sludge",
+                        type: "crab",
                         cell: item[0],
                         pivoted: item[2] ? true : false,
                         health: 12,
                         attackDamage: 3
                     });
                     break;
-                case "thick sludge":
+                case "troll":
                     cells.push({
                         name: 'enemy',
                         "attackType": "melee",
-                        type: "thick sludge",
+                        type: "troll",
                         cell: item[0],
                         pivoted: item[2] ? true : false,
                         health: 24,
                         attackDamage: 3
                     });
                     break;
-                case "archer":
+                case "javaliner":
                     cells.push({
                         name: 'enemy',
                         "range": 3,
                         "attackType": "ranged",
-                        type: "archer",
+                        type: "javaliner",
                         cell: item[0],
                         pivoted: item[2] ? true : false,
                         health: 7,
                         attackDamage: 3
                     });
                     break;
-                case "captive":
+                case "diamond":
                     cells.push({
-                        name: 'captive',
-                        type: 'Captive',
+                        name: 'diamond',
+                        type: 'diamond',
                         cell: item[0]
                     });
                     break;

@@ -35,7 +35,7 @@
     background-repeat: no-repeat; 
 }
 
-.captive {
+.diamond {
     background: url('/static/images/captive.png');
     background-repeat: no-repeat;
     background-size: 40px 40px;
@@ -46,11 +46,7 @@
     margin: 20px 40px; 
 }
 
-.captive-free {
-    background: url('/static/images/captive_free.png');
-}
-
-.sludge {
+.crab {
     background: url('/static/images/crab.png');
     background-size: 55px 25px;
     position: absolute;
@@ -61,7 +57,7 @@
     margin: 20px 40px;
 }
 
-.thick-sludge {
+.troll {
     background: url('/static/images/troll.png');
     background-size: 66px 78px;
     position: absolute;
@@ -82,7 +78,7 @@
     height: 78px;
 }
 
-.archer {
+.javaliner {
     background: url('/static/images/archer_normal.png');
     background-size: 90px 75px;
     position: absolute;
@@ -92,7 +88,7 @@
     height: 75px;
 }
 
-.archer-with-arrow {
+.javaliner-with-javelin {
     background: url('/static/images/archer_with_arrow.png');
     background-size: 90px 75px;
     width: 90px;
@@ -100,7 +96,7 @@
     top: 80px;
 }
 
-.archer-shoot {
+.javaliner-shoot {
     background: url('/static/images/archer_shoot.png');
     background-size: 90px 75px;
     width: 90px;

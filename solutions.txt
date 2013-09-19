@@ -25,7 +25,7 @@ jsWarrior.turn = function(warrior) {
     warrior.attack();
   }
   else{
-    if(warrior.health < 15)
+    if(warrior.getHealth() < 15)
     {
       warrior.rest();
     }
@@ -39,17 +39,17 @@ Level 4:
 ===============
 
 jsWarrior.turn = function(warrior) {
-  warrior.last_known_health = warrior.last_known_health ? warrior.last_known_health : warrior.health;
+  warrior.last_known_health = warrior.last_known_health ? warrior.last_known_health : warrior.getHealth();
   if(warrior.check() == "enemy")
   {
     warrior.attack();
   }
   else{
-    if(warrior.health < warrior.last_known_health)
+    if(warrior.getHealth() < warrior.last_known_health)
     {
       warrior.walk();
     }
-    else if(warrior.health < 15)
+    else if(warrior.getHealth() < 15)
     {
       warrior.rest();
     }
@@ -57,62 +57,62 @@ jsWarrior.turn = function(warrior) {
 	  warrior.walk();
     }
   }
-  warrior.last_known_health = warrior.health;
+  warrior.last_known_health = warrior.getHealth();
 }
 
 Level 5:
 ===============
 
 jsWarrior.turn = function(warrior) {
-  warrior.last_known_health = warrior.last_known_health ? warrior.last_known_health : warrior.health;
+  warrior.last_known_health = warrior.last_known_health ? warrior.last_known_health : warrior.getHealth();
   if(warrior.check() == "enemy")
   {
     warrior.attack();
   }
-  else if(warrior.check() == "captive")
+  else if(warrior.check() == "diamond")
   {
-    warrior.rescue();
+    warrior.collect();
   }
   else{
-    if(warrior.health < warrior.last_known_health)
+    if(warrior.getHealth() < warrior.last_known_health)
     {
       warrior.walk();
     }
-    else if(warrior.health < 15)
+    else if(warrior.getHealth() < 15)
     {
       warrior.rest();
     }
     else {
-	  warrior.walk();
+	   warrior.walk();
     }
   }
-  warrior.last_known_health = warrior.health;
+  warrior.last_known_health = warrior.getHealth();
 }
 
 Level 6:
 ==============
 
 jsWarrior.turn = function(warrior) {
-  warrior.last_known_health = warrior.last_known_health ? warrior.last_known_health : warrior.health;
+  warrior.last_known_health = warrior.last_known_health ? warrior.last_known_health : warrior.getHealth();
   if(warrior.check() == "enemy")
   {
     warrior.attack();
   }
-  else if(warrior.check() == "captive")
+  else if(warrior.check() == "diamond")
   {
-    warrior.rescue();
+    warrior.collect();
   }
   else{
-    if(warrior.health < warrior.last_known_health)
+    if(warrior.getHealth() < warrior.last_known_health)
     {
-      if(warrior.health < 8)
+      if(warrior.getHealth() < 8)
 	    warrior.walk("backward");
       else
         warrior.walk("forward");
     }
     else
     {
-      if(warrior.health < 15)
+      if(warrior.getHealth() < 15)
       {
         warrior.rest();
       }
@@ -121,14 +121,14 @@ jsWarrior.turn = function(warrior) {
       }
     }
   }
-  warrior.last_known_health = warrior.health;
+  warrior.last_known_health = warrior.getHealth();
 }
 
 Level 7:
 ===============
 
 jsWarrior.turn = function(warrior) {
-  warrior.last_known_health = warrior.last_known_health ? warrior.last_known_health : warrior.health;
+  warrior.last_known_health = warrior.last_known_health ? warrior.last_known_health : warrior.getHealth();
 
   if(warrior.check() == "wall")
   {
@@ -138,21 +138,21 @@ jsWarrior.turn = function(warrior) {
   {
     warrior.attack();
   }
-  else if(warrior.check() == "captive")
+  else if(warrior.check() == "diamond")
   {
-    warrior.rescue();
+    warrior.collect();
   }
   else{
-    if(warrior.health < warrior.last_known_health)
+    if(warrior.getHealth() < warrior.last_known_health)
     {
-      if(warrior.health < 8)
+      if(warrior.getHealth() < 8)
 	    warrior.walk("backward");
       else
         warrior.walk("forward");
     }
     else
     {
-      if(warrior.health < 15)
+      if(warrior.getHealth() < 15)
       {
         warrior.rest();
       }
@@ -161,5 +161,5 @@ jsWarrior.turn = function(warrior) {
       }
     }
   }
-  warrior.last_known_health = warrior.health;
+  warrior.last_known_health = warrior.getHealth();
 }
