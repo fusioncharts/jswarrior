@@ -191,7 +191,14 @@
             clearInterval(interval);
 
             // Create a function out of the code and run it
-            (new Function(code))();    
+            try {
+                (new Function(code))();        
+            } catch(exp) {
+                log(exp);
+                log('jsWarrior failed this level!');
+                return;
+            }
+            
 
             var turn = 0;
 
