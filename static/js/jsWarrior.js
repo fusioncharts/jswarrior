@@ -75,7 +75,7 @@
                         'width': w,
                         'height': 100,
                         'left': i * w,
-                        'top': 200
+                        'top': 100
                     })
                 )
             }

@@ -1,5 +1,5 @@
 #canvas {
-    height: 300px;
+    height: 200px;
     background: #98CAFF;
 }
 
@@ -8,7 +8,7 @@
     background-size: 36px 60px;
     position: absolute;
     left: 20px;
-    top: 190px;
+    top: 90px;
     width: 36px;
     height: 60px;
     margin: 0 40px; 
@@ -34,7 +34,7 @@
     background-repeat: no-repeat;
     background-size: 40px 40px;
     position: absolute;
-    top: 200px;
+    top: 100px;
     width: 40px;
     height: 40px;
     margin: 20px 40px; 
@@ -49,7 +49,7 @@
     background-size: 55px 25px;
     position: absolute;
     left: 20px;
-    top: 200px;
+    top: 100px;
     width: 55px;
     height: 25px;
     margin: 20px 40px;
@@ -60,7 +60,7 @@
     background-size: 66px 78px;
     position: absolute;
     left: 20px;
-    top: 180px;
+    top: 80px;
     width: 66px;
     height: 78px;
     margin: 0 20px;
@@ -71,7 +71,7 @@
     background-size: 66px 78px;
     position: absolute;
     left: 20px;
-    top: 180px;
+    top: 80px;
     width: 66px;
     height: 78px;
 }
@@ -81,7 +81,7 @@
     background-size: 90px 75px;
     position: absolute;
     left: 20px;
-    top: 180px;
+    top: 80px;
     width: 90px;
     height: 75px;
 }
@@ -91,7 +91,7 @@
     background-size: 90px 75px;
     width: 90px;
     height: 75px;
-    top: 180px;
+    top: 80px;
 }
 
 .archer-shoot {
@@ -99,7 +99,7 @@
     background-size: 90px 75px;
     width: 90px;
     height: 75px;
-    top: 180px;
+    top: 80px;
 }
 
 .cell {
@@ -136,7 +136,7 @@
     background-size: 52px 6px;
     width: 52px;
     height: 6px;
-    top: 200px;
+    top: 100px;
 }
 
 #console {
