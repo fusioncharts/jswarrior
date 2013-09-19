@@ -39,6 +39,11 @@ def get_default_template_values (requireLogin):
 
     return template_values
 
+def validate_level (levelId):
+    ilevel = int(levelId)
+    if ilevel <= 0 or ilevel >= 8:
+        raise Exception ("Invalid level id")
+
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         nocheating(self.response)
@@ -51,6 +56,7 @@ class MainHandler(webapp2.RequestHandler):
 class CompleteHandler (webapp2.RequestHandler):
     def post(self, levelid):
         nocheating(self.response)
+        validate_level (levelid)
         logging.debug("Marking coplete ", levelid)
         nextlevel = "" + str(int(levelid) + 1)
 
@@ -75,6 +81,7 @@ class CompleteHandler (webapp2.RequestHandler):
 class LevelHandler (webapp2.RequestHandler):
     def get(self, levelId):
         nocheating(self.response)
+        validate_level (levelId)
         template_values = get_default_template_values(True)
         template_values['levelId'] = int(levelId)
 
