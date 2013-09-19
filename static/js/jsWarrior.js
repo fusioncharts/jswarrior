@@ -920,8 +920,8 @@
                     // If the next cell is an enemy or a captive hit that bitch
                     if(obj.name === 'enemy' || obj.name === 'diamond') {
                         self.renderObject.removeClass('warrior-attack');
-                        log('jsWarrior inflicted ' + self.attackDamage + ' damage to the ' + obj.type, 'green');
-                        obj.hit(self.attackDamage);
+                        log('jsWarrior inflicted ' + attackDamage + ' damage to the ' + obj.type, 'green');
+                        obj.hit(attackDamage);
                         
                     } else {
                         // If the next cell is empty or a wall, warrior hits nothing and looks ridiculous attacking an empty
@@ -970,7 +970,7 @@
             setTimeout(function() {
 
                 log('jsWarrior rested and got 2 health!', 'green');
-                self.health += 2;
+                health += 2;
                 self.renderObject.removeClass('warrior-rest');
                 if(health > 20) {
                     health = 20;
