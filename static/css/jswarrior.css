@@ -165,6 +165,7 @@
     width: 96px;
     height: 48px;
     top: 20px;
+    margin-left: 40px; 
     -webkit-animation: float 2s linear infinite;
 }
 

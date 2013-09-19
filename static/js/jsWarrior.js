@@ -82,10 +82,10 @@
 
             // Create a new level
             self.level = new Level(numCells, target, initCells, self.canvas.innerWidth(), self.canvas.innerHeight());
-
+            debugger;
             self.canvas.append(
                 $('<div/>').addClass('target').css({
-                    left: self.level.getScreenPosition(target)
+                    left: self.level.getScreenPosition(target).x
                 })
             );
             // Loop through the level object and create the necessary objects and put
