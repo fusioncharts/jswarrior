@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block title %}JSWarrior{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-xs-12">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Email</th>
+					<th>Link</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for user in winners %}
+					<tr>
+						<td>{{ user.user.email()}}</td>
+						<td><a href="/">Results</a></td>
+					</tr>
+				{% endfor %}
+			</tbody>
+	</div>
+</div>
+{% endblock %}

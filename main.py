@@ -21,6 +21,10 @@ class Submission (db.Model):
     code = db.TextProperty()
     submission_time = db.DateTimeProperty(required=True,auto_now=True)
 
+class Winner(db.Model):
+    user = db.UserProperty(required = True, auto_current_user=True)
+    submission_time = db.DateTimeProperty(required=True,auto_now=True)
+
 def get_default_template_values (requireLogin):
     user = users.get_current_user()
 
@@ -51,6 +55,16 @@ class MainHandler(webapp2.RequestHandler):
         template_values['startGameUrl'] = users.create_login_url("/level/1")
 
         template = JINJA_ENVIRONMENT.get_template('index.html')
+        self.response.write(template.render(template_values))
+
+class AdminHandler (webapp2.RequestHandler):
+    def get(self):
+        nocheating(self.response)
+        template_values = get_default_template_values(False)
+        
+        template_values['winners'] = Winner.all().fetch(limit=100)
+        
+        template = JINJA_ENVIRONMENT.get_template('admin.html')
         self.response.write(template.render(template_values))
 
 class CompleteHandler (webapp2.RequestHandler):
@@ -91,6 +105,12 @@ class WinHandler (webapp2.RequestHandler):
         if sq.count() < 7:
             self.response.write("please finish previous levels first :)")
             return
+        
+        wq = Winner.all()
+        wq.filter("user =", users.get_current_user())
+        if wq.count () == 0:
+            winner = Winner()
+            winner.put()
 
         template = JINJA_ENVIRONMENT.get_template('win.html')
         self.response.write(template.render(template_values))
@@ -133,5 +153,6 @@ app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/complete/(.*)', CompleteHandler),
     ('/level/(.*)', LevelHandler),
+    ('/admin/', AdminHandler),
     ('/win/', WinHandler),
 ], debug=True)
