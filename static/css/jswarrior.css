@@ -191,3 +191,8 @@
     border: 1px solid #d0d0d0;
 }
 
+.ninja {
+    position: absolute;
+    top: -99999px;
+}
+
