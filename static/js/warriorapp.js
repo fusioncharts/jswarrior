@@ -97,7 +97,12 @@
 
         self.onLevelComplete = function(){
             $("#playButton").removeAttr("disabled");
-            self.activateNextButton();
+            if(window.demoMode) {
+                self.play();
+            }
+            else {
+                self.activateNextButton();
+            }
         };
 
         self.onLevelFailed = function() {
