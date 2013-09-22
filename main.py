@@ -26,20 +26,20 @@ class Winner(db.Model):
     submission_time = db.DateTimeProperty(required=True,auto_now=True)
 
 def get_default_template_values (requireLogin):
-    user = users.get_current_user()
+    # user = users.get_current_user()
 
     template_values = {}
 
-    if user:
-        template_values['loggedIn'] = True
-        template_values['logoutUrl'] = users.create_logout_url("/")
-        template_values['nickName'] = user.nickname()
-    else:
-        template_values['loggedIn'] = False
-        template_values['loginUrl'] = users.create_login_url("/")
+    # if user:
+    #     template_values['loggedIn'] = True
+    #     template_values['logoutUrl'] = users.create_logout_url("/")
+    #     template_values['nickName'] = user.nickname()
+    # else:
+    #     template_values['loggedIn'] = False
+    #     template_values['loginUrl'] = users.create_login_url("/")
 
-    if requireLogin and not template_values['loggedIn']:
-        raise Exception("You need to be logged in to do this")
+    # if requireLogin and not template_values['loggedIn']:
+    #     raise Exception("You need to be logged in to do this")
 
     return template_values
 
@@ -52,7 +52,7 @@ class MainHandler(webapp2.RequestHandler):
     def get(self):
         nocheating(self.response)
         template_values = get_default_template_values(False)
-        template_values['startGameUrl'] = users.create_login_url("/level/1")
+        template_values['startGameUrl'] = "/level/1"
 
         template = JINJA_ENVIRONMENT.get_template('index.html')
         self.response.write(template.render(template_values))
@@ -71,24 +71,23 @@ class CompleteHandler (webapp2.RequestHandler):
     def post(self, levelid):
         nocheating(self.response)
         validate_level (levelid)
-        logging.debug("Marking coplete ", levelid)
         nextlevel = "" + str(int(levelid) + 1)
 
-        # Write the submission to the database
-        # First, check if the user has already submitted for this level
-        sub = Submission()
-        sub.level = int(levelid)
+        # # Write the submission to the database
+        # # First, check if the user has already submitted for this level
+        # sub = Submission()
+        # sub.level = int(levelid)
 
-        sq = Submission.all()
-        sq.filter('user = ', users.get_current_user())
-        sq.filter('level = ', int(levelid))
-        sqres = sq.fetch(limit=5)
-        if len(sqres) > 0:
-            logging.info("Found an existing submission")
-            sub = sqres[0]
+        # sq = Submission.all()
+        # sq.filter('user = ', users.get_current_user())
+        # sq.filter('level = ', int(levelid))
+        # sqres = sq.fetch(limit=5)
+        # if len(sqres) > 0:
+        #     logging.info("Found an existing submission")
+        #     sub = sqres[0]
 
-        sub.code = self.request.get('code', '')
-        sub.put()
+        # sub.code = self.request.get('code', '')
+        # sub.put()
         
         if levelid == "7":
             self.redirect ("/win/")
@@ -100,17 +99,17 @@ class WinHandler (webapp2.RequestHandler):
         nocheating(self.response)
         template_values = get_default_template_values(True)
         
-        sq = Submission.all()
-        sq.filter('user =', users.get_current_user())
-        if sq.count() < 7:
-            self.response.write("please finish previous levels first :)")
-            return
+        # sq = Submission.all()
+        # sq.filter('user =', users.get_current_user())
+        # if sq.count() < 7:
+        #     self.response.write("please finish previous levels first :)")
+        #     return
         
-        wq = Winner.all()
-        wq.filter("user =", users.get_current_user())
-        if wq.count () == 0:
-            winner = Winner()
-            winner.put()
+        # wq = Winner.all()
+        # wq.filter("user =", users.get_current_user())
+        # if wq.count () == 0:
+        #     winner = Winner()
+        #     winner.put()
 
         template = JINJA_ENVIRONMENT.get_template('win.html')
         self.response.write(template.render(template_values))
@@ -122,27 +121,27 @@ class LevelHandler (webapp2.RequestHandler):
         template_values = get_default_template_values(True)
         template_values['levelId'] = int(levelId)
         
-        sq = Submission.all()
-        sq.filter('user =', users.get_current_user())
-        if sq.count() < int(levelId) - 1:
-            self.response.write("please finish previous levels first :)")
-            return
+        # sq = Submission.all()
+        # sq.filter('user =', users.get_current_user())
+        # if sq.count() < int(levelId) - 1:
+        #     self.response.write("please finish previous levels first :)")
+        #     return
 
-        sq = Submission.all()
-        sq.filter('user =', users.get_current_user())
-        sq.filter('level =', int(levelId))
-        sqres = sq.fetch(limit=5)
-        if len(sqres) > 0:
-            sub = sqres[0]
-            template_values['code'] = sub.code
-        else:
-            sq = Submission.all()
-            sq.filter('user =', users.get_current_user())
-            sq.filter('level =', int(levelId) - 1)
-            sqres = sq.fetch(limit=5)
+        # sq = Submission.all()
+        # sq.filter('user =', users.get_current_user())
+        # sq.filter('level =', int(levelId))
+        # sqres = sq.fetch(limit=5)
+        # if len(sqres) > 0:
+        #     sub = sqres[0]
+        #     template_values['code'] = sub.code
+        # else:
+        #     sq = Submission.all()
+        #     sq.filter('user =', users.get_current_user())
+        #     sq.filter('level =', int(levelId) - 1)
+        #     sqres = sq.fetch(limit=5)
 
-            if len(sqres) > 0:
-                template_values['code'] = sqres[0].code
+        #     if len(sqres) > 0:
+        #         template_values['code'] = sqres[0].code
 
         template_values['hintFile'] = "hints/hint%d.html" % int(levelId)
         template_values['completeLevelLink'] = "/complete/" + levelId

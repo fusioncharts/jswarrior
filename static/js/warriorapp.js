@@ -27,6 +27,10 @@
             mode: {name: "javascript"},
         });
         textCM.setSize(null, 400);
+        
+        if(window.localStorage.hasOwnProperty("jswCode")){
+            textCM.setValue (window.localStorage['jswCode']);
+        }
 
         $(".emulationModeButtons a").click(function() {
             textCM.setOption('keyMap', $(this).attr('data-mode'));
@@ -116,6 +120,8 @@
             code = textCM.getValue();
             $("#codeEditor").text(code);
             $("#playButton").attr("disabled", "disabled");
+            
+            window.localStorage['jswCode'] = code;
 
             game.setCallbacks(self.onLog, self.onLevelComplete, self.onLevelFailed);
             
@@ -133,7 +139,11 @@
         self.reset = function() {
             self.hideNextButton();
             logDiv = $("#logContainer");
-            textCM.setValue($("#defaultTemplate").text());
+            
+            if(confirm("Reset contents of code?"))
+            {
+                textCM.setValue($("#defaultTemplate").text());
+            }
         }
     }
 

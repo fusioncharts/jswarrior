@@ -21,13 +21,6 @@
             <div class="col-xs-8">
                 <h2>JSWarrior <small>by FusionCharts</small></h2> 
             </div>
-            <div class="col-xs-4 text-right" style="margin-top:25px">
-                {% if loggedIn %}
-                <p>Logged in as {{ nickName }}. <a href="{{logoutUrl}}">Logout</a></p>
-                {% else %}
-                <p><a href="{{loginUrl}}">Login</a></p>
-                {% endif %}
-            </div>
         </div>
         {% block content %}{% endblock %}
         <div class="row">
