@@ -238,25 +238,25 @@
 
                 try {
                     
-                    // setTimeout(function() {
-                        if(runWarrior) {
-                            
-                            turn ++;
-                            log('Turn ' + turn);
-                            if(_warrior.getHealth() > 0) {
-                                self.warrior.clearMove();
-                                jsWarrior.turn(self.warrior);
-                            }
-                        } else {
-
-                            if(_enemy && _enemy.health > 0 && _warrior.getHealth() > 0) {
-                                
-                                _enemy.playTurn();
-                            }    
-                        }
-                        runWarrior = !runWarrior;
+                    
+                    if(runWarrior) {
                         
-                    // }, 500);
+                        turn ++;
+                        log('Turn ' + turn);
+                        if(_warrior.getHealth() > 0) {
+                            self.warrior.clearMove();
+                            jsWarrior.turn(self.warrior);
+                        }
+                    } else {
+
+                        if(_enemy && _enemy.health > 0 && _warrior.getHealth() > 0) {
+                            
+                            _enemy.playTurn();
+                        }    
+                    }
+                    runWarrior = !runWarrior;
+                    
+            
                     
                     health.text(self.warrior.getHealth());   
                     if(self.warrior.getHealth() <= 0) {
@@ -284,111 +284,7 @@
                         onLevelComplete();
                         return;
                     }
-                }
-                // try {
-                    
-                //     var currentObject = cells[runCell].object;
-                //     if(currentObject.name === 'warrior') {
-                //         if(currentObject.getHealth() > 0) {
-                //             self.warrior.clearMove();
-                //             jsWarrior.turn(self.warrior);
-                //         }
-                        
-                //         runCell++;
-                        
-                //     } else {
-                //         var isWarrior = false;
-                //         for(var i=runCell; i<cells.length; i++) {
-
-                //             if(cells[i].object.name === 'enemy') {
-
-                //                 if(cells[i].object.health > 0 && cells[i].object.canPlay()) {
-                //                     cells[i].object.playTurn();
-                //                     runCell = level.numCells; 
-                //                     break;
-                //                 }
-                //                 //     for(var i=runCell; i<cells.length; i++) {
-
-                //                 //         if(cells[i].object.name === 'enemy' || cells[i].object.name === 'diamond') {
-
-                //                 //           if(!cells[i].object.canPlay()) {
-                //                 //             runCell++;
-                //                 //           } else {
-                //                 //             break;
-                //                 //           }
-                                            
-                //                 //         } else {
-                //                 //             break; 
-                //                 //         }
-                //                 //     }   
-                //                 // }
-                                
-                //                 // runCell++;         
-                //             } else if(cells[i].object.name === 'warrior') {
-                //                 isWarrior = true;
-                //                 runCell ++;
-                //                 break;   
-                //             }
-                //         }
-                //         if(!isWarrior) {
-                //             runCell = level.numCells;    
-                //         }
-                        
-                //      }
-
-
-                //     if(runCell === level.numCells) {
-                //         turn++;
-                //         log('turn ' + (turn + 1));
-                //         runCell = 0;
-                //     }
-                    
-                //     // Loop through the level and find enemies and make them do their action for
-                //     // this turn
-
-                //     // if(self.currentMove === 'other') {
-                //     //     for(var i=0;i<level.cells.length; i++) {
-                //     //         var cell = level.cells[i];
-                            
-                //     //         if(cell.object.name === 'enemy') {
-                //     //             cell.object.playTurn();
-                //     //         }
-                //     //     }
-                //     // }
-
-
-                //     // // Check warrior's health. If its 0 warrior died :( stop the code execution
-                //     if(self.warrior.getHealth() <= 0) {
-                //         clearInterval(interval);
-                //         onLevelFail ();
-                //         self.warrior.die();
-                //         log('jsWarrior died!');
-                //         log('jsWarrior failed this level!');
-                //         return;
-                //     }
-                //     // // Run the turn code provided by the user
-                //     // if(self.currentMove === 'warrior') {
-                //     //     jsWarrior.turn(self.warrior);
-                //     //     warrior.draw(context, function() {
-                //     //         self.currentMove = 'rest';
-                //     //     })
-                //     // }
-                        
-                //     // turn++;
-
-                //     // // Only 100 turns can be played if it exceeds js warrior failed
-                //     if(turn === 100) {
-                //         clearInterval(interval);
-                //         log('jsWarrior failed this level!');
-                //         onLevelFail ();
-                //         return;
-                //     }
-
-                //     // // If jsWarrior is at the target cell he won :)
-                
-
-                // } 
-                catch(exception) {
+                } catch(exception) {
                     // If any exception occurs this will catch it and tell the user that js warrior failed because
                     // of an exception in the user's code
                     log(exception.toString());
@@ -903,14 +799,22 @@
         self.check = function(direction) {
             var numCells = self.level.numCells;
             // If the next/prev cell is out of bounds then return wall
-            if(self.currentCell + self.moveVar >= numCells || self.currentCell + self.moveVar < 0) {
-                return 'wall';
-            }
+            
             // return the cells name checking its contents
             if(direction === 'forward' || direction === undefined) {
-                return self.level.getCellContents(self.currentCell + self.moveVar).object.name;    
+                if(self.currentCell + 1 >= numCells) {
+                    return 'wall';
+                } else {
+                    return self.level.getCellContents(self.currentCell + self.moveVar).object.name;        
+                }
+                
             } else if(direction === 'backward') {
-                return self.level.getCellContents(self.currentCell - self.moveVar).object.name;    
+                if(self.currentCell - 1 < 0) {
+                    return 'wall';
+                } else {
+                    return self.level.getCellContents(self.currentCell - self.moveVar).object.name;        
+                }
+                
             }
             
         }
@@ -924,9 +828,19 @@
             self.setMove();
             var obj;
             if(direction === 'forward' || direction === undefined) {
-                obj = self.level.getCellContents(self.currentCell + self.moveVar).object    
+                if(self.currentCell + 1 >= numCells) {
+                    log('jswarrior hits the wall');
+                    return;
+                } else {
+                    obj = self.level.getCellContents(self.currentCell + self.moveVar).object    
+                }
             } else if(direction === 'backward') {
-                obj = self.level.getCellContents(self.currentCell - self.moveVar).object    
+                if(self.currentCell - 1 < 0) {
+                    log('jswarrior hits the wall');
+                    return;
+                } else {
+                    obj = self.level.getCellContents(self.currentCell - self.moveVar).object        
+                }
             }
             self.renderObject.addClass('warrior-attack');
             $(self.renderObject).animate({
@@ -945,7 +859,7 @@
                     } else {
                         // If the next cell is empty or a wall, warrior hits nothing and looks ridiculous attacking an empty
                         // space maybe he smoked pot today
-                        log('jsWarrior warrior hit nothing!');
+                        log('jsWarrior hit nothing!');
                         
                     }
                 });
@@ -1023,9 +937,18 @@
             self.setMove();
             var obj;
             if(direction === 'forward' || direction === undefined) {
+                if(self.currentCell + 1 >= numCells) {
+                    log('jsWarrior hits the wall');
+                    return;
+                }
                 obj = self.level.getCellContents(self.currentCell + self.moveVar).object    
             } else if(direction === 'backward') {
-                obj = self.level.getCellContents(self.currentCell - self.moveVar).object    
+                if(self.currentCell - 1 < 0) {
+                    log('jsWarrior hits the wall');
+                    return;   
+                } else {
+                    obj = self.level.getCellContents(self.currentCell - self.moveVar).object        
+                }
             }
             
             $(self.renderObject).animate({
@@ -1055,28 +978,28 @@
          * Description  :   Returns the contents of three cells
          * Params       :   direction => 'forward' || 'backward'
          */
-        self.look = function(direction) {
-            var array = [];
-            var numCells = self.level.numCells;
-            var dir;
-            if(direction === 'forward' || direction === undefined) {
-                dir = 1;
-            } else if(direction === 'backward'){
-                dir = -1;
-            }
-            for(var i=0; i<3; i++) {
-                var tCell = self.currentCell + ((i+1)*self.moveVar) * dir;
-                if(tCell >= numCells || tCell < 0) {
-                    array[i] = 'wall';
-                    continue;
-                }
+        // self.look = function(direction) {
+        //     var array = [];
+        //     var numCells = self.level.numCells;
+        //     var dir;
+        //     if(direction === 'forward' || direction === undefined) {
+        //         dir = 1;
+        //     } else if(direction === 'backward'){
+        //         dir = -1;
+        //     }
+        //     for(var i=0; i<3; i++) {
+        //         var tCell = self.currentCell + ((i+1)*self.moveVar) * dir;
+        //         if(tCell >= numCells || tCell < 0) {
+        //             array[i] = 'wall';
+        //             continue;
+        //         }
 
-                var obj = self.level.getCellContents(tCell).object;
+        //         var obj = self.level.getCellContents(tCell).object;
 
-                array[i] = obj.name;
-            }
-            return array;
-        }
+        //         array[i] = obj.name;
+        //     }
+        //     return array;
+        // }
 
         // /**
         //  * Function     :   shoot
