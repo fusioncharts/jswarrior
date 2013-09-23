@@ -827,6 +827,7 @@
         self.attack = function(direction) {
             self.setMove();
             var obj;
+            var numCells = self.level.numCells;
             if(direction === 'forward' || direction === undefined) {
                 if(self.currentCell + 1 >= numCells) {
                     log('jswarrior hits the wall');
@@ -935,6 +936,7 @@
          */
         self.collect = function(direction) {
             self.setMove();
+            var numCells = self.level.numCells;
             var obj;
             if(direction === 'forward' || direction === undefined) {
                 if(self.currentCell + 1 >= numCells) {
