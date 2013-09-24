@@ -802,14 +802,16 @@
             
             // return the cells name checking its contents
             if(direction === 'forward' || direction === undefined) {
-                if(self.currentCell + 1 >= numCells) {
+                
+                if(self.currentCell + self.moveVar >= numCells || self.currentCell + self.moveVar < 0) {
                     return 'wall';
                 } else {
                     return self.level.getCellContents(self.currentCell + self.moveVar).object.name;        
                 }
                 
             } else if(direction === 'backward') {
-                if(self.currentCell - 1 < 0) {
+                
+                if(self.currentCell - self.moveVar < 0 || self.currentCell - self.moveVar >= numCells) {
                     return 'wall';
                 } else {
                     return self.level.getCellContents(self.currentCell - self.moveVar).object.name;        
@@ -829,14 +831,14 @@
             var obj;
             var numCells = self.level.numCells;
             if(direction === 'forward' || direction === undefined) {
-                if(self.currentCell + 1 >= numCells) {
+                if(self.currentCell + self.moveVar >= numCells || self.currentCell + self.moveVar < 0) {
                     log('jswarrior hits the wall');
                     return;
                 } else {
                     obj = self.level.getCellContents(self.currentCell + self.moveVar).object    
                 }
             } else if(direction === 'backward') {
-                if(self.currentCell - 1 < 0) {
+                if(self.currentCell - self.moveVar < 0 || self.currentCell - self.moveVar >= numCells) {
                     log('jswarrior hits the wall');
                     return;
                 } else {
@@ -939,13 +941,13 @@
             var numCells = self.level.numCells;
             var obj;
             if(direction === 'forward' || direction === undefined) {
-                if(self.currentCell + 1 >= numCells) {
+                if(self.currentCell + self.moveVar >= numCells || self.currentCell + self.moveVar < 0) {
                     log('jsWarrior hits the wall');
                     return;
                 }
                 obj = self.level.getCellContents(self.currentCell + self.moveVar).object    
             } else if(direction === 'backward') {
-                if(self.currentCell - 1 < 0) {
+                if(self.currentCell - self.moveVar < 0 || self.currentCell - self.moveVar >= numCells) {
                     log('jsWarrior hits the wall');
                     return;   
                 } else {
