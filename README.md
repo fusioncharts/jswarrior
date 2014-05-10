@@ -3,7 +3,9 @@ The JavaScript Warrior
 
 Welcome to the JSWarrior Game. Unlike traditional games, you can't control your character through a keyboard or joystick. The only way you can control your character is through JavaScript. To beat JSWarrior you can't just mash buttons, you need to think up a strategy and program the strategy as a JavaScript function.
 
-*Visit [jswarrior.fusioncharts.com](http://jswarrior.fusioncharts.com/) to start playing now!*
+![The JavaScript Warrior](http://jswarrior.fusioncharts.com/static/images/warrior.png)
+
+> *Visit [jswarrior.fusioncharts.com](http://jswarrior.fusioncharts.com/) to start playing now!*
 
 This game was built in a hackathon for JSFoo 2013, a JavaScript conference in Bangalore, India. Since a lot of people are enjoying it, we decided to keep it up for anyone to play.
 
